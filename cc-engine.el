@@ -8115,11 +8115,12 @@ comment at the start of cc-engine.el for more info."
 			     (not
 			      (and (c-major-mode-is 'c++-mode)
 				   (save-excursion
-				     (c-go-up-list-backward)
-				     (eq (char-after) ?\()
-				     (progn (c-backward-syntactic-ws)
-					    (c-simple-skip-symbol-backward))
-				     (looking-at c-paren-stmt-key)))))))
+				     (and
+				      (c-go-up-list-backward)
+				      (eq (char-after) ?\()
+				      (progn (c-backward-syntactic-ws)
+					     (c-simple-skip-symbol-backward))
+				      (looking-at c-paren-stmt-key))))))))
 		      found)
 		    (eq (char-before) ?\[)
 		    (c-go-up-list-forward))
