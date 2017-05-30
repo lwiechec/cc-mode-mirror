@@ -1807,7 +1807,7 @@ with a brace block."
 		(c-backward-token-2)
 		(c-backward-syntactic-ws))
 	      (setq name-end (point))
-	      (c-backward-token-2)
+	      (c-back-over-compound-identifier)
 	      (buffer-substring-no-properties (point) name-end)))))))))
 
 (defun c-declaration-limits (near)
