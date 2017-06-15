@@ -381,7 +381,7 @@ control).  See \"cc-mode.el\" for more info."
   ;;(define-key c-mode-base-map "\C-c\C-v"  'c-version)
   ;; (define-key c-mode-base-map "\C-c\C-y"  'c-toggle-hungry-state)  Commented out by ACM, 2005-11-22.
   (define-key c-mode-base-map "\C-c\C-w" 'c-subword-mode)
-  )
+  (define-key c-mode-base-map "\C-c\C-k" 'c-toggle-comment-style))
 
 ;; We don't require the outline package, but we configure it a bit anyway.
 (cc-bytecomp-defvar outline-level)
@@ -535,7 +535,7 @@ that requires a literal mode spec at compile time."
 	(setq yank-handled-properties (remq yank-cat-handler
 					    yank-handled-properties)))))
 
-  ;; For the benefit of adaptive file, which otherwise mis-fills.
+  ;; For the benefit of adaptive fill, which otherwise mis-fills.
   (setq fill-paragraph-handle-comment nil)
 
   ;; Install `c-fill-paragraph' on `fill-paragraph-function' so that a
@@ -615,6 +615,8 @@ that requires a literal mode spec at compile time."
   ;; setup the comment indent variable in a Emacs version portable way
   (make-local-variable 'comment-indent-function)
   (setq comment-indent-function 'c-comment-indent)
+  ;; What sort of comments are default for M-;?
+  (setq c-block-comment-flag c-block-comment-is-default)
 
 ;;   ;; Put submode indicators onto minor-mode-alist, but only once.
 ;;   (or (assq 'c-submode-indicators minor-mode-alist)
@@ -1579,12 +1581,9 @@ This function is called from `c-common-init', once per mode initialization."
 
 (defvar c-mode-map ()
   "Keymap used in c-mode buffers.")
-(if c-mode-map
-    nil
-  (setq c-mode-map (c-make-inherited-keymap))
+(setq c-mode-map (c-make-inherited-keymap))
   ;; add bindings which are only useful for C
-  (define-key c-mode-map "\C-c\C-e"  'c-macro-expand)
-  )
+(define-key c-mode-map "\C-c\C-e"  'c-macro-expand)
 
 (easy-menu-define c-c-menu c-mode-map "C Mode Commands"
 		  (cons "C" (c-lang-const c-mode-menu c)))
@@ -1665,14 +1664,12 @@ Key bindings:
 
 (defvar c++-mode-map ()
   "Keymap used in c++-mode buffers.")
-(if c++-mode-map
-    nil
-  (setq c++-mode-map (c-make-inherited-keymap))
-  ;; add bindings which are only useful for C++
-  (define-key c++-mode-map "\C-c\C-e" 'c-macro-expand)
-  (define-key c++-mode-map "\C-c:"    'c-scope-operator)
-  (define-key c++-mode-map "<"        'c-electric-lt-gt)
-  (define-key c++-mode-map ">"        'c-electric-lt-gt))
+(setq c++-mode-map (c-make-inherited-keymap))
+;; add bindings which are only useful for C++
+(define-key c++-mode-map "\C-c\C-e" 'c-macro-expand)
+(define-key c++-mode-map "\C-c:"    'c-scope-operator)
+(define-key c++-mode-map "<"        'c-electric-lt-gt)
+(define-key c++-mode-map ">"        'c-electric-lt-gt)
 
 (easy-menu-define c-c++-menu c++-mode-map "C++ Mode Commands"
 		  (cons "C++" (c-lang-const c-mode-menu c++)))
@@ -1729,11 +1726,9 @@ Key bindings:
 
 (defvar objc-mode-map ()
   "Keymap used in objc-mode buffers.")
-(if objc-mode-map
-    nil
-  (setq objc-mode-map (c-make-inherited-keymap))
+(setq objc-mode-map (c-make-inherited-keymap))
   ;; add bindings which are only useful for Objective-C
-  (define-key objc-mode-map "\C-c\C-e" 'c-macro-expand))
+(define-key objc-mode-map "\C-c\C-e" 'c-macro-expand)
 
 (easy-menu-define c-objc-menu objc-mode-map "ObjC Mode Commands"
 		  (cons "ObjC" (c-lang-const c-mode-menu objc)))
@@ -1794,11 +1789,8 @@ Key bindings:
 
 (defvar java-mode-map ()
   "Keymap used in java-mode buffers.")
-(if java-mode-map
-    nil
-  (setq java-mode-map (c-make-inherited-keymap))
-  ;; add bindings which are only useful for Java
-  )
+(setq java-mode-map (c-make-inherited-keymap))
+;; add bindings which are only useful for Java
 
 ;; Regexp trying to describe the beginning of a Java top-level
 ;; definition.  This is not used by CC Mode, nor is it maintained
@@ -1860,11 +1852,8 @@ Key bindings:
 
 (defvar idl-mode-map ()
   "Keymap used in idl-mode buffers.")
-(if idl-mode-map
-    nil
-  (setq idl-mode-map (c-make-inherited-keymap))
-  ;; add bindings which are only useful for IDL
-  )
+(setq idl-mode-map (c-make-inherited-keymap))
+;; add bindings which are only useful for IDL
 
 (easy-menu-define c-idl-menu idl-mode-map "IDL Mode Commands"
 		  (cons "IDL" (c-lang-const c-mode-menu idl)))
@@ -1920,11 +1909,9 @@ Key bindings:
 
 (defvar pike-mode-map ()
   "Keymap used in pike-mode buffers.")
-(if pike-mode-map
-    nil
-  (setq pike-mode-map (c-make-inherited-keymap))
-  ;; additional bindings
-  (define-key pike-mode-map "\C-c\C-e" 'c-macro-expand))
+(setq pike-mode-map (c-make-inherited-keymap))
+;; additional bindings
+(define-key pike-mode-map "\C-c\C-e" 'c-macro-expand)
 
 (easy-menu-define c-pike-menu pike-mode-map "Pike Mode Commands"
 		  (cons "Pike" (c-lang-const c-mode-menu pike)))
@@ -1985,20 +1972,18 @@ Key bindings:
 
 (defvar awk-mode-map ()
   "Keymap used in awk-mode buffers.")
-(if awk-mode-map
-    nil
-  (setq awk-mode-map (c-make-inherited-keymap))
-  ;; add bindings which are only useful for awk.
-  (define-key awk-mode-map "#" 'self-insert-command)
-  (define-key awk-mode-map "/" 'self-insert-command)
-  (define-key awk-mode-map "*" 'self-insert-command)
-  (define-key awk-mode-map "\C-c\C-n" 'undefined) ; #if doesn't exist in awk.
-  (define-key awk-mode-map "\C-c\C-p" 'undefined)
-  (define-key awk-mode-map "\C-c\C-u" 'undefined)
-  (define-key awk-mode-map "\M-a" 'c-beginning-of-statement) ; 2003/10/7
-  (define-key awk-mode-map "\M-e" 'c-end-of-statement) ; 2003/10/7
-  (define-key awk-mode-map "\C-\M-a" 'c-awk-beginning-of-defun)
-  (define-key awk-mode-map "\C-\M-e" 'c-awk-end-of-defun))
+(setq awk-mode-map (c-make-inherited-keymap))
+;; add bindings which are only useful for awk.
+(define-key awk-mode-map "#" 'self-insert-command)
+(define-key awk-mode-map "/" 'self-insert-command)
+(define-key awk-mode-map "*" 'self-insert-command)
+(define-key awk-mode-map "\C-c\C-n" 'undefined) ; #if doesn't exist in awk.
+(define-key awk-mode-map "\C-c\C-p" 'undefined)
+(define-key awk-mode-map "\C-c\C-u" 'undefined)
+(define-key awk-mode-map "\M-a" 'c-beginning-of-statement) ; 2003/10/7
+(define-key awk-mode-map "\M-e" 'c-end-of-statement) ; 2003/10/7
+(define-key awk-mode-map "\C-\M-a" 'c-awk-beginning-of-defun)
+(define-key awk-mode-map "\C-\M-e" 'c-awk-end-of-defun)
 
 (easy-menu-define c-awk-menu awk-mode-map "AWK Mode Commands"
 		  (cons "AWK" (c-lang-const c-mode-menu awk)))
