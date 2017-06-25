@@ -83,6 +83,11 @@
 (require 'font-lock)
 (require 'cc-defs)
 
+(defalias 'c--string-to-int
+  (if (fboundp 'string-to-int)
+      'string-to-int
+    'string-to-number))
+
 (defconst cc-test-verbose nil
   "Turn on verbose logging.
 Status messages aren't overwritten in batch mode.")
@@ -457,7 +462,7 @@ to be set as a file local variable.")
 
   (let ((last-pos (point)))
     (while (re-search-forward "\\(\\=\\|[^<]\\)\\([0-9]+\\)" nil t)
-      (let ((anchor-pos (string-to-int (match-string 2)))
+      (let ((anchor-pos (c--string-to-int (match-string 2)))
 	    moved-lines anchor-rel-line anchor-col)
 
 	;; Why is count-lines a bloody mess? :P
@@ -495,8 +500,8 @@ to be set as a file local variable.")
 	    ;; A relative line should never be negative, but if it is
 	    ;; then we don't want it to break here.
 	    "<\\(-?[0-9]+\\),\\([0-9]+\\)>" nil t)
-      (let ((anchor-rel-line (string-to-int (match-string 1)))
-	    (anchor-col (string-to-int (match-string 2)))
+      (let ((anchor-rel-line (c--string-to-int (match-string 1)))
+	    (anchor-col (c--string-to-int (match-string 2)))
 	    moved-lines anchor-pos)
 
 	;; Why is count-lines a bloody mess? :P
