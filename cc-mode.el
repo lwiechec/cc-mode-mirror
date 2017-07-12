@@ -697,6 +697,11 @@ compatible with old code; callers should always specify it."
   (make-local-variable 'outline-level)
   (setq outline-regexp "[^#\n\^M]"
 	outline-level 'c-outline-level)
+  (when (boundp 'add-log-current-defun-function)
+    (make-local-variable 'add-log-current-defun-function)
+    (setq add-log-current-defun-function
+	  (lambda ()
+	    (or (c-cpp-define-name) (c-defun-name)))))
 
   (let ((rfn (assq mode c-require-final-newline)))
     (when rfn
