@@ -2,8 +2,8 @@ foo() {}
 bar (x) {}
 main (argc, argv) {}
 
-/* The following are currently not recognized correctly as
- * declarations. */
+/* The following are now recognized correctly as
+ * declarations.  2017-10. */
 
 main (argc, argv)
     int argc;
