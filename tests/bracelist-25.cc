@@ -33,10 +33,10 @@ int main()
             {2, {'f', 'o', 'o'} }
         };
     std::cout << foo(
-    {
-        "foo",
-        "bar"
-    }
+	{
+	    "foo",
+	    "bar"
+	}
         ).first
               << '\n';
     std::string ars[] = {std::string("one"),
