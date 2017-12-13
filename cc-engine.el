@@ -8178,9 +8178,9 @@ comment at the start of cc-engine.el for more info."
   ;; If a declaration is parsed:
   ;;
   ;;   The point is left at the first token after the first complete
-  ;;   declarator, if there is one.  The return value is a list of 4 elements,
+  ;;   declarator, if there is one.  The return value is a list of 5 elements,
   ;;   where the first is the position of the first token in the declarator.
-  ;;   (See below for the other three.)
+  ;;   (See below for the other four.)
   ;;   Some examples:
   ;;
   ;; 	 void foo (int a, char *b) stuff ...
@@ -8219,7 +8219,9 @@ comment at the start of cc-engine.el for more info."
   ;;
   ;;   The third element of the return value is non-nil when the declaration
   ;;   parsed might be an expression.  The fourth element is the position of
-  ;;   the start of the type identifier.
+  ;;   the start of the type identifier.  The fifth element is t if either
+  ;;   CONTEXT was 'top, or the declaration is detected to be treated as top
+  ;;   level (e.g. with the keyword "extern").
   ;;
   ;; If a cast is parsed:
   ;;
@@ -8317,6 +8319,9 @@ comment at the start of cc-engine.el for more info."
 	;; Set when the symbol before `preceding-token-end' is known to
 	;; terminate the previous construct, or when we're at point-min.
 	at-decl-start
+	;; Set when we have encountered a keyword (e.g. "extern") which
+	;; causes the following declaration to be treated as though top-level.
+	make-top
 	;; Save `c-record-type-identifiers' and
 	;; `c-record-ref-identifiers' since ranges are recorded
 	;; speculatively and should be thrown away if it turns out
@@ -8348,7 +8353,9 @@ comment at the start of cc-engine.el for more info."
 
 	  (cond
 	  ;; Look for a specifier keyword clause.
-	   ((or (looking-at c-prefix-spec-kwds-re)
+	   ((or (and (looking-at c-make-top-level-key)
+		     (setq make-top t))
+		(looking-at c-prefix-spec-kwds-re)
 		(and (c-major-mode-is 'java-mode)
 		 (looking-at "@[A-Za-z0-9]+")))
 	    (save-match-data
@@ -8618,7 +8625,7 @@ comment at the start of cc-engine.el for more info."
 		 ;; construct here in C, since we want to recognize this as a
 		 ;; typeless function declaration.
 		 (not (and (c-major-mode-is 'c-mode)
-			   (eq context 'top)
+			   (or (eq context 'top) make-top)
 			   (eq (char-after) ?\)))))
 	    (if (eq (char-after) ?\))
 		(when (> paren-depth 0)
@@ -8666,7 +8673,7 @@ comment at the start of cc-engine.el for more info."
 					   ;; Recognize a top-level typeless
 					   ;; function declaration in C.
 					   (and (c-major-mode-is 'c-mode)
-						(eq context 'top)
+						(or (eq context 'top) make-top)
 						(eq (char-after) ?\))))))))
 			  (setq pos (c-up-list-forward (point)))
 			  (eq (char-before pos) ?\)))
@@ -8923,6 +8930,7 @@ comment at the start of cc-engine.el for more info."
 	 (when (and got-identifier
 		    (looking-at c-after-suffixed-type-decl-key)
 		    (or (eq context 'top)
+			make-top
 			(and (eq context nil)
 			     (match-beginning 1)))
 		    (if (and got-parens
@@ -9089,7 +9097,7 @@ comment at the start of cc-engine.el for more info."
 	 ;; CASE 19
 	 (or (eq context 'decl)
 	     (and (c-major-mode-is 'c-mode)
-		  (eq context 'top))))))
+		  (or (eq context 'top) make-top))))))
 
     ;; The point is now after the type decl expression.
 
@@ -9194,7 +9202,8 @@ comment at the start of cc-engine.el for more info."
 	    (and (or at-type-decl at-typedef)
 		 (cons at-type-decl at-typedef))
 	    maybe-expression
-	    type-start))
+	    type-start
+	    (or (eq context 'top) make-top)))
 
      (t
       ;; False alarm.  Restore the recorded ranges.
