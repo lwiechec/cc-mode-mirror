@@ -10674,7 +10674,8 @@ comment at the start of cc-engine.el for more info."
    ;; This will pick up brace list declarations.
    (save-excursion
      (goto-char containing-sexp)
-     (c-backward-over-enum-header))
+     (and (c-backward-over-enum-header)
+	  (point)))
    ;; this will pick up array/aggregate init lists, even if they are nested.
    (save-excursion
      (let ((bufpos t)
@@ -11299,9 +11300,7 @@ comment at the start of cc-engine.el for more info."
 		     (cdr (assoc (match-string 1)
 				 c-other-decl-block-key-in-symbols-alist))
 		     (max (c-point 'boi paren-pos) (point))))
-		   ((save-excursion
-		      (goto-char paren-pos)
-		      (c-looking-at-or-maybe-in-bracelist containing-sexp))
+		   ((c-inside-bracelist-p paren-pos paren-state nil)
 		    (if (save-excursion
 			  (goto-char paren-pos)
 			  (c-looking-at-statement-block))
@@ -11393,10 +11392,9 @@ comment at the start of cc-engine.el for more info."
 
        ;; CASE B.2: brace-list-open
        ((or (consp special-brace-list)
-	    (consp
-	     (c-looking-at-or-maybe-in-bracelist
-	      containing-sexp beg-of-same-or-containing-stmt))
-	    )
+	    (c-inside-bracelist-p (point)
+				  (cons containing-sexp paren-state)
+				  nil))
 	;; The most semantically accurate symbol here is
 	;; brace-list-open, but we normally report it simply as a
 	;; statement-cont.  The reason is that one normally adjusts
@@ -11942,7 +11940,7 @@ comment at the start of cc-engine.el for more info."
 	      (cond
 	       ((c-backward-over-enum-header)
 		(setq placeholder (c-point 'boi)))
-	       ((consp (setq placeholder 
+	       ((consp (setq placeholder
 			     (c-looking-at-or-maybe-in-bracelist
 			      containing-sexp lim)))
 		(setq tmpsymbol (and (cdr placeholder) 'topmost-intro-cont))
