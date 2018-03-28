@@ -123,7 +123,7 @@ in REGEXP."
   '(when (and (featurep 'xemacs) ; There is now (2005/12) code in GNU Emacs CVS
 				 ; to make the call to f-l-c-k throw an error.
 	      (let (font-lock-keywords)
-		(font-lock-compile-keywords '("\\<\\>"))
+		(font-lock-compile-keywords '("a\\`"))
 		font-lock-keywords))	; did the previous call foul this up?
      (defun font-lock-compile-keywords (keywords)
        "Compile KEYWORDS (a list) and return the list of compiled keywords.
