@@ -85,7 +85,7 @@
   (progn
     (require 'font-lock)
     (let (font-lock-keywords)
-      (font-lock-compile-keywords '("a\\`"))
+      (font-lock-compile-keywords '("a\\`")) ; doesn't match anything.
       font-lock-keywords))))
 
 
@@ -1774,7 +1774,7 @@ when it's needed.  The default is the current language taken from
 	      (t
 	       re)))
 
-    ;; Produce a regexp that matches nothing.
+    ;; Produce a regexp that doesn't match anything.
     (if adorn
 	"\\(a\\`\\)"
       "a\\`")))
