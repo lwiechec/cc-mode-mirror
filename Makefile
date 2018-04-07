@@ -6,7 +6,6 @@ ELISPFILES=\
  cc-awk.el \
  cc-bytecomp.el \
  cc-cmds.el \
- cc-compat.el \
  cc-defs.el \
  cc-engine.el \
  cc-fonts.el \
@@ -26,9 +25,7 @@ COREFILES=\
 EXTRAFILES=\
  MANIFEST \
  README \
- COPYING \
- cc-lobotomy.el \
- cc-fix.el
+ COPYING
 
 .SUFFIXES: .el .elc
 

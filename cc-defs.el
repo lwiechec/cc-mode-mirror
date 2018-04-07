@@ -70,25 +70,6 @@
 (cc-bytecomp-defun string-to-syntax)	; Emacs 21
 
 
-;; cc-fix.el contains compatibility macros that should be used if
-;; needed.
-(cc-conditional-require
- 'cc-fix (or (/= (regexp-opt-depth "\\(\\(\\)\\)") 2)
-	     (not (fboundp 'push))
-	     ;; XEmacs 21.4 doesn't have `delete-dups'.
-	     (not (fboundp 'delete-dups))))
-
-(cc-conditional-require-after-load
- 'cc-fix "font-lock"
- (and
-  (featurep 'xemacs)
-  (progn
-    (require 'font-lock)
-    (let (font-lock-keywords)
-      (font-lock-compile-keywords '("a\\`")) ; doesn't match anything.
-      font-lock-keywords))))
-
-
 ;;; Variables also used at compile time.
 
 (defconst c-version "5.33"
