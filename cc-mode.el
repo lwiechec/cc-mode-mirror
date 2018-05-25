@@ -1174,9 +1174,12 @@ Note that the style variables are always made local to the buffer."
       ;; FIXME!!!  Write a clever comment here.
       (goto-char c-new-END)
       (when (equal (c-get-char-property (1- (point)) 'syntax-table) '(15))
-	(backward-sexp)
-	(c-clear-char-property (1- c-new-END) 'syntax-table)
-	(c-clear-char-property (point) 'syntax-table)))
+	(if (memq (char-before) '(?\n ?\r))
+	    (progn
+	      (backward-sexp)
+	      (c-clear-char-property (1- c-new-END) 'syntax-table)
+	      (c-clear-char-property (point) 'syntax-table))
+	  (c-clear-char-property (1- (point)) 'syntax-table))))
 
      (t (if (memq (char-before c-new-END) c-string-delims)
 	    (c-clear-char-property (1- c-new-END) 'syntax-table))))
