@@ -7,5 +7,5 @@
 ((topmost-intro <6,0>))
 ((brace-list-intro <1,0>))
 ((brace-list-entry <1,4>))
-((brace-list-entry <2,4>))
+((brace-list-entry <1,4>))
 ((brace-list-close <4,0>))

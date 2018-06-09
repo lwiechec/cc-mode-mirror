@@ -6,4 +6,4 @@
 ((brace-list-open <1,0>))
 ((brace-list-intro <1,0>))
 ((arglist-cont-nonempty <1,4> <1,17>) (brace-list-entry <1,19>))
-((arglist-cont-nonempty <2,4> <2,17>) (brace-list-entry <2,19>))
+((brace-list-entry <1,19>))
