@@ -482,6 +482,9 @@
 
   (eval-after-load "edebug"
     '(progn
+       (def-edebug-spec c-put-font-lock-face t)
+       (def-edebug-spec c-remove-font-lock-face t)
+       (def-edebug-spec c-put-font-lock-string-face t)
        (def-edebug-spec c-fontify-types-and-refs let*)
        (def-edebug-spec c-make-syntactic-matcher t)
        ;; If there are literal quoted or backquoted highlight specs in

@@ -1606,6 +1606,9 @@ No indentation or other \"electric\" behavior is performed."
 		  paren-state orig-point-min orig-point-max))
        (setq where 'in-block))))
 
+(eval-after-load "edebug"
+  '(def-edebug-spec c-while-widening-to-decl-block t))
+
 (defun c-beginning-of-defun (&optional arg)
   "Move backward to the beginning of a defun.
 Every top level declaration that contains a brace paren block is

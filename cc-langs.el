@@ -201,8 +201,10 @@ the evaluated constant value at compile time."
 
 (put 'c-lang-defvar 'lisp-indent-function 'defun)
 (eval-after-load "edebug"
-  '(def-edebug-spec c-lang-defvar
-     (&define name def-form &optional &or ("quote" symbolp) stringp)))
+  '(progn
+     (def-edebug-spec c-lang-defvar
+       (&define name def-form &optional &or ("quote" symbolp) stringp))
+     (def-edebug-spec c-lang-setvar (&define name def-form))))
 
 (eval-and-compile
   ;; Some helper functions used when building the language constants.
