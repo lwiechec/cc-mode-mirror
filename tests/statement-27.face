@@ -1,0 +1,11 @@
+(0 cpp) (8 reg) (9 str) (19 reg)
+
+(0 typ) (3 reg) (4 fun) (8 reg)
+
+(4 typ) (8 reg) (9 var) (16 reg) (19 con) (23 reg)
+(4 typ) (7 reg) (9 var) (16 reg) (19 con) (26 reg)
+
+(4 typ) (8 reg) (9 var) (19 reg) (37 con) (44 reg)
+(12 con) (16 reg)
+(10 con) (15 reg)
+
