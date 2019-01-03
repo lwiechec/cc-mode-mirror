@@ -698,7 +698,7 @@ comment at the start of cc-engine.el for more info."
 				    (c-point 'bol (elt saved-pos 0))))))))
 
 (defun c-beginning-of-statement-1 (&optional lim ignore-labels
-					     noerror comma-delim)
+					     noerror comma-delim hit-lim)
   "Move to the start of the current statement or declaration, or to
 the previous one if already at the beginning of one.  Only
 statements/declarations on the same level are considered, i.e. don't
@@ -740,7 +740,8 @@ label without crossing the colon character.
 
 LIM may be given to limit the search.  If the search hits the limit,
 point will be left at the closest following token, or at the start
-position if that is less ('same is returned in this case).
+position if that is less.  If HIT-LIM is non-nil, nil is returned in
+this case, otherwise 'same.
 
 NOERROR turns off error logging to `c-parsing-error'.
 
@@ -1277,6 +1278,17 @@ comment at the start of cc-engine.el for more info."
 	    (if (and last-label-pos (< last-label-pos start))
 		;; Might have jumped over several labels.  Go to the last one.
 		(setq pos last-label-pos)))))
+
+      ;; Have we hit LIM without finding a beginning of statement?
+      (when (and hit-lim
+		 (bobp)
+		 (>= pos start))
+	(unless
+	    (and (eq (point) 1)
+		 (not (looking-at c-comment-start-regexp))
+		 (not (and c-anchored-cpp-prefix
+			   (looking-at c-anchored-cpp-prefix))))
+	  (setq ret nil)))
 
       ;; Have we got "case <expression>:"?
       (goto-char pos)
@@ -9667,7 +9679,7 @@ comment at the start of cc-engine.el for more info."
 
   (let ((beg (point)) id-start)
     (and
-     (eq (c-beginning-of-statement-1 lim) 'same)
+     (eq (c-beginning-of-statement-1 lim nil nil nil t) 'same)
 
      (not (and (c-major-mode-is 'objc-mode)
 	       (c-forward-objc-directive)))
