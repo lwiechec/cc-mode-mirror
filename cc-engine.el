@@ -733,8 +733,9 @@ Return:
 'up             if stepped to a containing statement;
 'previous       if stepped to a preceding statement;
 'beginning      if stepped from a statement continuation clause to
-                its start clause; or
-'macro          if stepped to a macro start.
+                its start clause;
+'macro          if stepped to a macro start; or
+nil             if HIT-LIM is non-nil, and we hit the limit.
 Note that 'same and not 'label is returned if stopped at the same
 label without crossing the colon character.
 
@@ -882,7 +883,14 @@ comment at the start of cc-engine.el for more info."
 	tok ptok pptok)
 
     (save-restriction
-      (if lim (narrow-to-region lim (point-max)))
+;;;; OLD STOUGH, 2019-01-03
+      ;; (if lim (narrow-to-region lim (point-max)))
+;;;; NEW STOUGH, 2019-01-03
+      (setq lim (if lim
+		    (max lim (point-min))
+		  (point-min)))
+      (widen)
+;;;; END OF NEW STOUGH
 
       (if (save-excursion
 	    (and (c-beginning-of-macro)
@@ -928,9 +936,10 @@ comment at the start of cc-engine.el for more info."
 	;; The loop is exited only by throwing nil to the (catch 'loop ...):
 	;; 1. On reaching the start of a macro;
 	;; 2. On having passed a stmt boundary with the PDA stack empty;
-	;; 3. On reaching the start of an Objective C method def;
-	;; 4. From macro `c-bos-pop-state'; when the stack is empty;
-	;; 5. From macro `c-bos-pop-state-and-retry' when the stack is empty.
+	;; 3. Going backwards past the search limit.
+	;; 4. On reaching the start of an Objective C method def;
+	;; 5. From macro `c-bos-pop-state'; when the stack is empty;
+	;; 6. From macro `c-bos-pop-state-and-retry' when the stack is empty.
 	(while
 	    (catch 'loop ;; Throw nil to break, non-nil to continue.
 	      (cond
@@ -1166,13 +1175,18 @@ comment at the start of cc-engine.el for more info."
 			  sym 'boundary)
 		    ;; Like a C "continue".  Analyze the next sexp.
 		    (throw 'loop t))))
+;;;; NEW STOUGH, 2019-01-03
+	      ;; Have we gone past the limit?
+	      (when (< (point) lim)
+		(throw 'loop nil))	; 3. Gone back over the limit.
+;;;; END OF NEW STOUGH
 
 	      ;; ObjC method def?
 	      (when (and c-opt-method-key
 			 (setq saved (c-in-method-def-p)))
 		(setq pos saved
 		      ignore-labels t)	; Avoid the label check on exit.
-		(throw 'loop nil))	; 3. ObjC method def.
+		(throw 'loop nil))	; 4. ObjC method def.
 
 	      ;; Might we have a bitfield declaration, "<type> <id> : <size>"?
 	      (if c-has-bitfields
@@ -1236,6 +1250,14 @@ comment at the start of cc-engine.el for more info."
 	      )		     ; end of (catch loop ....)
 	  )		     ; end of sexp-at-a-time (while ....)
 
+;;;; NEW STOUGH, 2019-01-03
+;;;; MODIFIED, 2019-01-25
+	(when (and hit-lim
+		   (or (< pos lim)
+		       (>= pos start)))
+	  (setq ret nil))
+;;;; END OF NEW STOUGH
+
 	;; If the stack isn't empty there might be errors to report.
 	(while stack
 	  (if (and (vectorp saved-pos) (eq (length saved-pos) 3))
@@ -1278,17 +1300,6 @@ comment at the start of cc-engine.el for more info."
 	    (if (and last-label-pos (< last-label-pos start))
 		;; Might have jumped over several labels.  Go to the last one.
 		(setq pos last-label-pos)))))
-
-      ;; Have we hit LIM without finding a beginning of statement?
-      (when (and hit-lim
-		 (bobp)
-		 (>= pos start))
-	(unless
-	    (and (eq (point) 1)
-		 (not (looking-at c-comment-start-regexp))
-		 (not (and c-anchored-cpp-prefix
-			   (looking-at c-anchored-cpp-prefix))))
-	  (setq ret nil)))
 
       ;; Have we got "case <expression>:"?
       (goto-char pos)
