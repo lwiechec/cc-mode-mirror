@@ -883,14 +883,10 @@ comment at the start of cc-engine.el for more info."
 	tok ptok pptok)
 
     (save-restriction
-;;;; OLD STOUGH, 2019-01-03
-      ;; (if lim (narrow-to-region lim (point-max)))
-;;;; NEW STOUGH, 2019-01-03
       (setq lim (if lim
 		    (max lim (point-min))
 		  (point-min)))
       (widen)
-;;;; END OF NEW STOUGH
 
       (if (save-excursion
 	    (and (c-beginning-of-macro)
@@ -1175,11 +1171,10 @@ comment at the start of cc-engine.el for more info."
 			  sym 'boundary)
 		    ;; Like a C "continue".  Analyze the next sexp.
 		    (throw 'loop t))))
-;;;; NEW STOUGH, 2019-01-03
+
 	      ;; Have we gone past the limit?
 	      (when (< (point) lim)
 		(throw 'loop nil))	; 3. Gone back over the limit.
-;;;; END OF NEW STOUGH
 
 	      ;; ObjC method def?
 	      (when (and c-opt-method-key
@@ -1250,13 +1245,10 @@ comment at the start of cc-engine.el for more info."
 	      )		     ; end of (catch loop ....)
 	  )		     ; end of sexp-at-a-time (while ....)
 
-;;;; NEW STOUGH, 2019-01-03
-;;;; MODIFIED, 2019-01-25
 	(when (and hit-lim
 		   (or (< pos lim)
 		       (>= pos start)))
 	  (setq ret nil))
-;;;; END OF NEW STOUGH
 
 	;; If the stack isn't empty there might be errors to report.
 	(while stack
