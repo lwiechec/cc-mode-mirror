@@ -670,10 +670,12 @@ comment at the start of cc-engine.el for more info."
 	     stack (cdr stack))
        t
      ,do-if-done
+     (setq pre-stmt-found t)
      (throw 'loop nil)))
 (defmacro c-bos-pop-state-and-retry ()
   '(throw 'loop (setq state (car (car stack))
 		      saved-pos (cdr (car stack))
+		      pre-stmt-found (not (cdr stack))
 		      ;; Throw nil if stack is empty, else throw non-nil.
 		      stack (cdr stack))))
 (defmacro c-bos-save-pos ()
@@ -846,6 +848,10 @@ comment at the start of cc-engine.el for more info."
 	pos
 	;; Position of last stmt boundary character (e.g. ;).
 	boundary-pos
+	;; Non-nil when a construct has been found which delimits the search
+	;; for a statement start, e.g. an opening brace or a macro start, or a
+	;; keyword like `if' when the PDA stack is empty.
+	pre-stmt-found
 	;; The position of the last sexp or bound that follows the
 	;; first found colon, i.e. the start of the nonlabel part of
 	;; the statement.  It's `start' if a colon is found just after
@@ -960,6 +966,7 @@ comment at the start of cc-engine.el for more info."
 		  (setq pos saved
 			ret 'macro
 			ignore-labels t))
+		(setq pre-stmt-found t)
 		(throw 'loop nil))	; 1. Start of macro.
 
 	       ;; Do a round through the automaton if we've just passed a
@@ -969,6 +976,7 @@ comment at the start of cc-engine.el for more info."
 			 (setq sym (intern (match-string 1)))))
 
 		(when (and (< pos start) (null stack))
+		  (setq pre-stmt-found t)
 		  (throw 'loop nil))	; 2. Statement boundary.
 
 		;; The PDA state handling.
@@ -1103,6 +1111,7 @@ comment at the start of cc-engine.el for more info."
 			  ;; Give up if we hit an unbalanced block.  Since the
 			  ;; stack won't be empty the code below will report a
 			  ;; suitable error.
+			  (setq pre-stmt-found t)
 			  (throw 'loop nil))
 			(cond
 			 ;; Have we moved into a macro?
@@ -1180,6 +1189,7 @@ comment at the start of cc-engine.el for more info."
 	      (when (and c-opt-method-key
 			 (setq saved (c-in-method-def-p)))
 		(setq pos saved
+		      pre-stmt-found t
 		      ignore-labels t)	; Avoid the label check on exit.
 		(throw 'loop nil))	; 4. ObjC method def.
 
@@ -1246,7 +1256,8 @@ comment at the start of cc-engine.el for more info."
 	  )		     ; end of sexp-at-a-time (while ....)
 
 	(when (and hit-lim
-		   (or (< pos lim)
+		   (or (not pre-stmt-found)
+		       (< pos lim)
 		       (>= pos start)))
 	  (setq ret nil))
 
