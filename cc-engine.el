@@ -1089,7 +1089,8 @@ comment at the start of cc-engine.el for more info."
 	      ;; Step to the previous sexp, but not if we crossed a
 	      ;; boundary, since that doesn't consume an sexp.
 	      (if (eq sym 'boundary)
-		  (setq ret 'previous)
+		  (when (>= (point) lim)
+		    (setq ret 'previous))
 
 		;; HERE IS THE SINGLE PLACE INSIDE THE PDA LOOP WHERE WE MOVE
 		;; BACKWARDS THROUGH THE SOURCE.
@@ -1252,7 +1253,7 @@ comment at the start of cc-engine.el for more info."
 		    ptok tok
 		    tok (point)
 		    pos tok) ; always non-nil
-	      )		     ; end of (catch loop ....)
+	      )		     ; end of (catch 'loop ....)
 	  )		     ; end of sexp-at-a-time (while ....)
 
 	(when (and hit-lim
