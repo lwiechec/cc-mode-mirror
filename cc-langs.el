@@ -3247,7 +3247,7 @@ Identifier syntax is in effect when this is matched \(see
 	       "\\|"
 	       "\\.\\.\\."
 	       "\\|"
-	       "[*(&]"
+	       "[*(&~]"
 	       "\\|"
 	       (c-lang-const c-type-decl-prefix-key)
 	       "\\|"

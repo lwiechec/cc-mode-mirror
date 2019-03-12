@@ -5,6 +5,6 @@ typedef enum {
 } test;
 
 typedef enum {GOOD,
-              BETTER,
-              BEST
+    BETTER,
+    BEST
 } test;

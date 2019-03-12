@@ -6,7 +6,7 @@ mixed foo (
     b, c
     );
 mixed foo = {a,
-	     b, c
+    b, c
 };
 mixed foo = ({a,
 	      b, c

@@ -20,7 +20,7 @@ class CLS {
 struct STR {
     int i; float f;
 } str_1 = /* ; */ {1,
-		   1.7
+    1.7
 },
     str_2 = {2, 3.1};
 
@@ -28,5 +28,5 @@ struct STR {
     int i; float f;
 } str_1 = /* ; */ {1, 1.7},
     str_2 = {2,
-	     3.1
+	3.1
     };

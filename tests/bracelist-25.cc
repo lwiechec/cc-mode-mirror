@@ -40,14 +40,14 @@ int main()
         ).first
               << '\n';
     std::string ars[] = {std::string("one"),
-                         "two",
-                         {
-                             't',
-                             'h',
-                             'r',
-                             'e',
-                             'e'
-                         }
+	"two",
+	{
+	    't',
+	    'h',
+	    'r',
+	    'e',
+	    'e'
+	}
     };
 
 }
