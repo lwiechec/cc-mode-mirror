@@ -1,0 +1,30 @@
+(0 typ) (4 reg) (5 var) (8 reg) (16 str) (21 reg)
+(0 typ) (4 reg) (5 var) (8 reg) (14 cmt)
+(0 reg) (9 str) (14 reg)
+(0 typ) (4 reg) (5 var) (10 reg) (18 str) (20 reg)
+(0 typ) (4 reg) (5 var) (11 reg) (21 str) (24 reg)
+(0 typ) (4 reg) (5 var) (11 reg) (21 str) (31 reg)
+(0 typ) (4 reg) (5 var) (10 reg) (19 str) (22 reg)
+(0 typ) (4 reg) (5 var) (11 reg) (24 str) (29 reg)
+(0 typ) (4 reg) (5 var) (12 reg) (25 str) (30 reg)
+(0 typ) (4 reg) (5 var) (12 reg) (36 str) (45 reg)
+(0 typ) (4 reg) (5 var) (14 reg) (22 str) (67 reg)
+(0 typ) (4 reg) (5 var) (15 reg) (23 str)
+
+
+(12 reg)
+(0 typ) (4 reg) (5 var) (13 reg) (26 str) (34 reg)
+
+(0 cpp) (7 reg) (8 fun) (11 reg) (12 var) (15 reg) (17 typ) (21 reg) (22 var) (25 reg) (36 str) (47 reg) (57 str) (64 reg)
+(0 cpp) (7 reg) (8 fun) (17 reg) (18 var) (21 reg) (23 typ) (27 reg) (28 var) (31 reg) (42 str)
+
+(9 reg)
+
+
+(0 cpp) (7 reg) (8 fun) (14 reg) (15 var) (18 reg) (20 typ) (24 reg) (25 var) (28 reg) (34 err) (43 str) (46 err) (48 reg)
+
+(0 typ) (4 reg) (5 var) (8 reg) (19 str) (24 reg)
+
+(0 typ) (4 reg) (5 var) (8 reg) (19 str) (24 reg)
+(0 typ) (4 reg) (5 var) (10 reg) (18 str) (20 reg)
+(0 typ) (4 reg) (5 var) (8 reg) (14 err) (20 str)
