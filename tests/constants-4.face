@@ -1,0 +1,12 @@
+(0 typ) (4 reg) (5 var) (8 reg)
+(0 typ) (4 reg) (5 var) (8 reg) (12 str) (14 reg)
+(0 typ) (4 reg) (5 var) (8 reg) (12 str) (16 reg)
+(0 typ) (4 reg) (5 var) (8 reg) (12 str) (16 reg)
+(0 typ) (4 reg) (5 var) (8 reg) (12 str) (18 reg)
+(0 typ) (4 reg) (5 var) (8 reg) (12 str) (16 reg)
+(0 typ) (4 reg) (5 var) (8 reg) (12 str) (18 reg)
+(0 typ) (4 reg) (5 var) (8 reg) (12 str) (18 reg)
+
+(0 typ) (4 reg) (5 var) (8 reg) (11 err) (12 reg) (17 err) (18 reg)
+(0 typ) (4 reg) (5 var) (8 reg) (11 err) (12 reg) (16 err) (17 reg)
+(0 typ) (4 reg) (5 var) (8 reg) (11 err) (12 reg) (16 err) (17 reg)
