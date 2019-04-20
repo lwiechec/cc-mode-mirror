@@ -1,6 +1,6 @@
 //! @decl RxNode test (function(DataList,void|Rx.Rx.Process:int) func, @
 //!		       void|int low, void|int high)
-//! FIXME: Multiline declarations aren't fontified correctly.
+//! (2019-04): Multiline declarations are now handled better than before.
 
 #define DataList mixed
 //! @decl typedef mixed DataList;
@@ -15,7 +15,7 @@
 //! @decl typedef RxNode|string|array(LaxRxType)|@
 //!               multiset(LaxRxType)|@
 //!               mapping(LaxRxType:LaxRxType) LaxRxType
-//! FIXME: Multiline declarations aren't fontified correctly.
+//! (2019-04): Multiline declarations are now handled better than before.
 
 class X {
     mapping(int|string:mixed) submatches (DataList input, void|mixed extra);
