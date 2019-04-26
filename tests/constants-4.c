@@ -6,7 +6,14 @@ char foo = '\x1B00';
 char foo = '\123';
 char foo = '\u201a';
 char foo = '\U201a';
+char foo = '\'';
+char foo = '\\';
+char foo = '\n';
 
 char foo = '\0123';
 char foo = '\x1g';
 char foo = '\X1b';
+char foo = '\';
+char foo = '\nn';
+char foo = '\n\n';
+char foo = '\\n';
