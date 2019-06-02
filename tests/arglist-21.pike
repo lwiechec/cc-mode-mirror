@@ -5,3 +5,7 @@ void f() {
 		// Awkward case.  What to do here?
 		reverse (indices (allocate (alts))))));
 }
+
+// Local Variables:
+// c-file-offsets: ((inlambda . c-lineup-inexpr-block))
+// End:

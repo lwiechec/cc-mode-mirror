@@ -28,3 +28,7 @@ void|int foo (mapping(int:string) test)
 	    return from;
 	});
 }
+
+// Local Variables:
+// c-file-offsets: ((inlambda . c-lineup-inexpr-block))
+// End:

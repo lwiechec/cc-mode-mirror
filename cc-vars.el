@@ -1212,7 +1212,11 @@ can always override the use of `c-default-style' by making calls to
        (template-args-cont    . (c-lineup-template-args +))
        ;; Anchor pos: Boi at the decl start.  This might be changed;
        ;; the logical position is clearly the opening '<'.
-       (inlambda              . c-lineup-inexpr-block)
+;;;; OLD STOUGH, 2019-06-02
+       ;; (inlambda              . c-lineup-inexpr-block)
+;;;; NEW STOUGH, 2019-06-02
+       (inlambda              . 0)
+;;;; END OF NEW STOUGH
        ;; Anchor pos: None.
        (lambda-intro-cont     . +)
        ;; Anchor pos: Boi at the lambda start.

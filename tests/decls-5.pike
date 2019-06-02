@@ -77,9 +77,9 @@ void b2()
 	   2) +
 	17;
     function gnu = lambda (int i)
-		   {
-		       return i;
-		   };
+    {
+	return i;
+    };
 }
 void b2h()
 {
@@ -87,6 +87,6 @@ void b2h()
 	   2) +
 	17;
     function gnu = lambda (int i) {
-		       return i;
-		   };
+	return i;
+    };
 }

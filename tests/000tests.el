@@ -390,7 +390,11 @@ to be set as a file local variable.")
 	(composition-close     . 0)
 	(incomposition         . 0)
 	(template-args-cont    . (c-lineup-template-args +))
-	(inlambda              . c-lineup-inexpr-block)
+;;;; OLD STOUGH, 2019-06-02
+	;; (inlambda              . c-lineup-inexpr-block)
+;;;; NEW STOUGH, 2019-06-02
+	(inlambda              . 0)
+;;;; END OF NEW STOUGH
 	(lambda-intro-cont     . +)
 	(inexpr-statement      . +)
 	(inexpr-class          . +)
