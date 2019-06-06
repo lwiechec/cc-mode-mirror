@@ -930,7 +930,7 @@ file name in angle brackets or quotes."
 	 (c-make-keywords-re 'appendable
 	   (c-lang-const c-cpp-include-directives))
 	 "[ \t]*")
-      "a\\`"))				; Doesn't match anything
+      "\\`a\\`"))			; Doesn't match anything
 (c-lang-defvar c-cpp-include-key (c-lang-const c-cpp-include-key))
 
 (c-lang-defconst c-opt-cpp-macro-define
@@ -1315,7 +1315,7 @@ operators."
 	   (c--set-difference (c-lang-const c-assignment-operators)
 			      '("=")
 			      :test 'string-equal)))
-      "a\\`"))				; Doesn't match anything.
+      "\\`a\\`"))				; Doesn't match anything.
 (c-lang-defvar c-assignment-op-regexp
   (c-lang-const c-assignment-op-regexp))
 
@@ -1538,7 +1538,7 @@ properly."
   ;; language)
   t (if (c-lang-const c-block-comment-ender)
 	(regexp-quote (c-lang-const c-block-comment-ender))
-      "a\\`"))				; Doesn't match anything.
+      "\\`a\\`"))			; Doesn't match anything.
 (c-lang-defvar c-block-comment-ender-regexp
 	       (c-lang-const c-block-comment-ender-regexp))
 
@@ -1558,7 +1558,7 @@ backslash."
   ;; `font-lock-comment-delimiter-face'.
   t (if (c-lang-const c-block-comment-ender)
 	(concat "[ \t]*" (c-lang-const c-block-comment-ender-regexp))
-      "a\\`"))				; Doesn't match anything.
+      "\\`a\\`"))			; Doesn't match anything.
 (c-lang-setvar font-lock-comment-end-skip
 	       (c-lang-const c-font-lock-comment-end-skip))
 
@@ -1577,7 +1577,7 @@ backslash."
   ;; language)
   t (if (c-lang-const c-block-comment-starter)
 	(regexp-quote (c-lang-const c-block-comment-starter))
-      "a\\`"))				; Doesn't match anything.
+      "\\`a\\`"))			; Doesn't match anything.
 (c-lang-defvar c-block-comment-start-regexp
   (c-lang-const c-block-comment-start-regexp))
 
@@ -1586,7 +1586,7 @@ backslash."
   ;; language; it does in all 7 CC Mode languages).
   t (if (c-lang-const c-line-comment-starter)
 	(regexp-quote (c-lang-const c-line-comment-starter))
-      "a\\`"))				; Doesn't match anything.
+      "\\`a\\`"))			; Doesn't match anything.
 (c-lang-defvar c-line-comment-start-regexp
 	       (c-lang-const c-line-comment-start-regexp))
 
@@ -1621,7 +1621,7 @@ starter."
 
 (c-lang-defconst c-doc-comment-start-regexp
   "Regexp to match the start of documentation comments."
-  t    "a\\`"	; Doesn't match anything.
+  t    "\\`a\\`"			; Doesn't match anything.
   ;; From font-lock.el: `doxygen' uses /*! while others use /**.
   (c c++ objc) "/\\*[*!]"
   java "/\\*\\*"
@@ -3110,7 +3110,7 @@ Note that Java specific rules are currently applied to tell this from
   "Regexp matching a keyword that is followed by a colon, where
   the whole construct can precede a declaration.
   E.g. \"public:\" in C++."
-  t "a\\`"				; Doesn't match anything.
+  t "\\`a\\`"				; Doesn't match anything.
   c++ (c-make-keywords-re t (c-lang-const c-protection-kwds)))
 (c-lang-defvar c-decl-start-colon-kwd-re
   (c-lang-const c-decl-start-colon-kwd-re))
@@ -3307,7 +3307,7 @@ Identifier syntax is in effect when this is matched \(see
   t (if (c-lang-const c-type-modifier-kwds)
 	(concat (regexp-opt (c-lang-const c-type-modifier-kwds) t) "\\>")
       ;; Default to a regexp that never matches.
-      "a\\`")
+      "\\`a\\`")
   ;; Check that there's no "=" afterwards to avoid matching tokens
   ;; like "*=".
   (c objc) (concat "\\("
@@ -3345,7 +3345,7 @@ that might precede the identifier in a declaration, e.g. the
 as the end of the operator.  Identifier syntax is in effect when
 this is matched \(see `c-identifier-syntax-table')."
   t ;; Default to a regexp that never matches.
-    "a\\`"
+    "\\`a\\`"
   ;; Check that there's no "=" afterwards to avoid matching tokens
   ;; like "*=".
   (c objc) (concat "\\(\\*\\)"
@@ -3504,7 +3504,7 @@ list."
 (c-lang-defconst c-pre-id-bracelist-key
   "A regexp matching tokens which, preceding an identifier, signify a bracelist.
 "
-  t "a\\`"				; Doesn't match anything.
+  t "\\`a\\`"				; Doesn't match anything.
   c++ "new\\([^[:alnum:]_$]\\|$\\)\\|&&?\\(\\S.\\|$\\)")
 (c-lang-defvar c-pre-id-bracelist-key (c-lang-const c-pre-id-bracelist-key))
 
@@ -3560,7 +3560,7 @@ the invalidity of the putative template construct."
 	 ;; before the '{' of the enum list, to avoid searching too far.
 	 "[^][{};/#=]*"
 	 "{")
-      "a\\`"))				; Doesn't match anything.
+      "\\`a\\`"))			; Doesn't match anything.
 (c-lang-defvar c-enum-clause-introduction-re
 	       (c-lang-const c-enum-clause-introduction-re))
 
@@ -3701,7 +3701,7 @@ Only used if `c-recognize-colon-labels' is set."
   "Regexp matching things that can't occur two symbols before a colon in
 a label construct.  This catches C++'s inheritance construct \"class foo
 : bar\".  Only used if `c-recognize-colon-labels' is set."
-  t "a\\`"				; Doesn't match anything.
+  t "\\`a\\`"				; Doesn't match anything.
   c++ (c-make-keywords-re t '("class")))
 (c-lang-defvar c-nonlabel-token-2-key (c-lang-const c-nonlabel-token-2-key))
 
