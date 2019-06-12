@@ -873,8 +873,7 @@ Note that the style variables are always made local to the buffer."
 ;; A workaround for `syntax-ppss''s failure to take account of changes in
 ;; syntax-table text properties.  This variable gets set to the lowest
 ;; position where the syntax-table text property is changed, and that value
-;; gets supplied to `syntax-ppss-after-change-function' (aka
-;; `syntax-ppss-flush-cache' in recent Emacsen) just before a font locking is
+;; gets supplied to `syntax-ppss-flush-cache' just before a font locking is
 ;; due to take place.
 
 (defun c-called-from-text-property-change-p ()
@@ -1815,8 +1814,7 @@ Note that this is a strict tail, so won't match, e.g. \"0x....\".")
   ;; A workaround for syntax-ppss's failure to notice syntax-table text
   ;; property changes.
   (when (fboundp 'syntax-ppss)
-    (syntax-ppss-after-change-function c-syntax-table-hwm))) ; Also known as
-	       ; `syntax-ppss-flush-cache' in recent versions of Emacs.
+    (syntax-ppss-flush-cache c-syntax-table-hwm)))
 
 (defun c-doc-fl-decl-start (pos)
   ;; If the line containing POS is in a doc comment continued line (as defined
