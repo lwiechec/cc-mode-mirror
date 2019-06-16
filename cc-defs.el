@@ -68,7 +68,6 @@
 (cc-bytecomp-defvar text-property-default-nonsticky) ; Emacs 21
 (cc-bytecomp-defvar lookup-syntax-properties) ; XEmacs
 (cc-bytecomp-defun string-to-syntax)	; Emacs 21
-(cc-bytecomp-defvar c-syntax-table-hwm)
 
 
 ;;; Variables also used at compile time.
@@ -92,6 +91,13 @@ not known.")
 ;; Have to make `c-buffer-is-cc-mode' permanently local so that it
 ;; survives the initialization of the derived mode.
 (put 'c-buffer-is-cc-mode 'permanent-local t)
+
+(defvar c-syntax-table-hwm most-positive-fixnum)
+;; A workaround for `syntax-ppss''s failure to take account of changes in
+;; syntax-table text properties.  This variable gets set to the lowest
+;; position where the syntax-table text property is changed, and that value
+;; gets supplied to `syntax-ppss-flush-cache' just before a font locking is
+;; due to take place.
 
 
 ;; The following is used below during compilation.

@@ -161,7 +161,6 @@
 (cc-bytecomp-defvar c-doc-line-join-re)
 (cc-bytecomp-defvar c-doc-bright-comment-start-re)
 (cc-bytecomp-defvar c-doc-line-join-end-ch)
-(cc-bytecomp-defvar c-syntax-table-hwm)
 
 
 ;; Make declarations for all the `c-lang-defvar' variables in cc-langs.
