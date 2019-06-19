@@ -1,5 +1,44 @@
 CC Mode NEWS -- user visible changes.  -*- outline -*-
 
+* Changes in 5.34
+
+This version contains a few mainly minor new features, significant internal
+improvements and many bug fixes.
+
+** Emacs 23 is no longer supported, although CC Mode might well still work with
+it.  The minimum versions supported are Emacs 24.5 and the latest version of
+XEmacs 21.5.  Please note that due to the cessation of active development of
+XEmacs, CC Mode 5.34 might well be the last version to support XEmacs at all.
+
+** The now redundant file cc-fix.el has been removed.
+
+** It is intended that C++14 is fully supported.  In particular, C++ digit
+separators work.  Some features of C++17 are also supported.
+
+** There are two new command bindings:
+*** c-toggle-comment-style, bound by default to C-c C-k, switches the default
+comment style (i.e., that inserted by M-;) between block comments and line
+comments.
+*** c-display-defun-name is now bound by default to C-c C-z.
+
+** Emacs's electric-pair-mode should now work together with CC Mode.
+
+** Modes derived from CC Mode can now use single quotes to delimit strings.
+To activate this, set the lang-const `c-single-quotes-quote-strings' for the
+derived mode in cc-langs.el.
+
+** The new "mode" c-or-c++-mode selects either C Mode or C++ Mode for .h files,
+depending on their contents.  To disable this, add an entry for .h to
+auto-mode-alist (see page "Choosing Modes" in the Emacs manual).
+
+** Some optimizations, particularly for C++ Mode, have been implemented.
+
+** For consistency with the syntactic symbol 'statement', source lines with
+syntax 'brace-list-entry' are now anchored on the preceding such line rather
+than the first such line.
+
+** Many bugs have been fixed.
+
 * Changes in 5.33
 
 This version contains a few new big features, significant interal improvements

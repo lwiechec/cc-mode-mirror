@@ -1,7 +1,8 @@
 ;;; cc-subword.el --- Handling capitalized subwords in a nomenclature
 
 ;; Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012,
-;; 2013, 2014, 2015, 2016; Free Software Foundation, Inc.
+;; 2013, 2014, 2015, 2016, 2017, 2018, 2019
+;; Free Software Foundation, Inc.
 
 ;; Author: Masatake YAMATO
 

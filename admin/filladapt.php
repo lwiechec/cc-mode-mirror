@@ -20,9 +20,9 @@ Mode to get better handling of e.g. bulleted lists in comments.
   the CC Mode site.
 
   <p>You might instead want to download a <a
-  href="filladapt.el">patched version</a> of Filladapt that corrects a
-  small problem (see below).  The suggested <a
-  href="filladapt.el.diff">patch</a> is also available in context diff
+  href="filladapt.el">patched version</a> of Filladapt that corrects two
+  small problems (see below).  The suggested <a
+  href="filladapt.el.diff">patch</a> is also available in universal diff
   form if you prefer to patch it yourself.
 
   <p><li>Configure the Filladapt variables for use in CC Mode.  The
@@ -43,7 +43,14 @@ Mode to get better handling of e.g. bulleted lists in comments.
 
 <h3>Filladapt problems</h3>
 
-<p>There is a minor problem, or rather lack of a feature, in the
+<p>The original filladapt.el makes one use of the old-style backquote
+construct <code>(` (defvar (, var) (, value) (, doc)))</code>.  This no longer
+compiles in recent versions of Emacs.  This piece of code can be fixed by
+replacing it with the modern formulation <code>`(defvar ,var ,value
+,doc)</code>, and this has been done in the <a href="filladapt.el">patched</a>
+version and the <a href="filladapt.el.diff">patch</a> referred to below.
+
+<p>There is another minor problem, or rather lack of a feature, in the
 current version of Filladapt (2.12 when this is written) that makes it
 do a poor job when the regexp on <code>c-comment-prefix-regexp</code>
 matches the empty string.  The effect is that Filladapt fills only

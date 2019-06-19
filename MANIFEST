@@ -15,9 +15,6 @@ You should have received the following files in this distribution:
     cc-fonts.el, cc-guess.el, cc-langs.el, cc-menus.el, cc-mode.el,
     cc-styles.el, cc-subword.el, cc-vars.el: The source code.
 
-    cc-fix.el: (previously named cc-mode-19.el).  Detects and corrects
-    bugs in various older (X)Emacs versions.
-
     cc-bytecomp.el: Contains helpers used during byte compiling to
     ensure that there's no mixup with earler versions of CC Mode which
     might be loaded.

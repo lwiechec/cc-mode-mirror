@@ -28,15 +28,15 @@ considered too risky to be allowed into the patch branch.
 <p>Alternatively, you can switch to using the patch branch, the one with just bug
 fixes in it.  Use this command:
 
-<pre>hg update Branch_5_33</pre>
+<pre>hg update Branch_5_34</pre>
 
 <p>To browse the project's history and current state online, use
 <a href="https://sourceforge.net/p/cc-mode/cc-mode/ci/default/tree/">this</a>.
 
-<p>You are especially welcome to report bugs, opinions and patches
-regarding the development version.  However if you've found a bug,
-it's a good idea to try an update before you report it, since chances
-are that we have found it ourselves already.
+<p>You are especially welcome to report bugs, opinions and patches regarding
+the development version.  However if you've found a bug, it's a good idea to
+try an update before you report it, since we might well have found it
+ourselves already.
 
 <h3>The source tree</h3>
 
@@ -54,8 +54,6 @@ interesting; it just contains the source for this web site.
 <a href="http://hgbook.red-bean.com">Mercurial: the Definitive Guide</a> by
 Bryan O'Sullivan.  The SourceForge
 <a href="http://sourceforge.net/p/forge/documentation/Mercurial">documentation</a>
-might be helpful when setting up your Mercurial host.  If you are new to Mercurial,
-you might want to read Joel Spolsky's
-excellent <a href="http://hginit.com">tutorial</a>.
+might be helpful when setting up your Mercurial host.
 
 <?php include ("footer.h"); ?>
