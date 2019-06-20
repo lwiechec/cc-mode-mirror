@@ -1,3 +1,47 @@
+2019-06-19  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	Update the repository for the release of CC Mode 5.34.
+
+	* ANNOUNCEMENT: Update to release 5.34.
+
+	* ChangeLog: Prefix the entries for changes since 5.33.
+
+	* MANIFEST: Remove reference to cc-fix.el, which no longer exists.
+
+	* NEWS: Prefix user visible changes in 5.34 to the file.
+
+	* README: Update the note of tested Emacsen for CC Mode 5.34.  Change the
+	recommended version of makeinfo to the newer perl versions.
+
+	* changelinks: Add a link for changes-534.php.
+
+	* changes-534.php: New file.
+
+	* compat.php: Update to 5.34, and mention the (X)Emacs releases it was tested
+	on.  Remove the reference to cc-fix.el, which no longer exists.
+
+	* contrib.php: This file has been deleted, since it was very out of date.
+
+	* filladapt.el, filladapt.el.diff: Convert the old style backquote form to
+	modern style.
+
+	* filladapt.php: Note also the backquote modification in filladapt.el.
+
+	* hgaccess.php: Update to 5.34.  Remove the link to http://hginit.com, which
+	no longer exists.
+
+	* index.php: Update to 5.34.  Remove the link to contrib.php.
+
+	* links.h: Replace link to changes-533.php with one to changes-534.php.
+
+	* release.php: Update to 5.34.
+
+	* cc-align.el, cc-awk.el, cc-bytecomp.el, cc-cmds.el, cc-defs.el,
+	* cc-engine.el, cc-fonts.el, cc-guess.el, cc-langs.el, cc-menus.el, cc-mode.el,
+	* cc-styles.el, cc-subword.el, cc-vars.el: Update the copyright notices.
+
+	* cc-mode.texi: Update for release 5.34, update the copyright notice.
+
 2019-06-17  Alan Mackenzie  <bug-cc-mode@gnu.org>
 
 	Move defvars of c-doc-line-join-re + two others from cc-fonts.el to cc-mode.el
