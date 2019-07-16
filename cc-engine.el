@@ -96,6 +96,14 @@
 ;;   `text-property-default-nonsticky' if that variable exists (Emacs
 ;;   >= 21).
 ;;
+;; 'c-fl-syn-tab
+;;   Saves the value of syntax-table properties which have been
+;;   temporarily removed from certain buffer positions.  The syntax-table
+;;   properties are restored during c-before-change, c-after-change, and
+;;   font locking.  The purpose of the temporary removal is to enable
+;;   C-M-* key sequences to operate over bogus pairs of string delimiters
+;;   which are "adjacent", yet do not delimit a string.
+;;
 ;; 'c-is-sws and 'c-in-sws
 ;;   Used by `c-forward-syntactic-ws' and `c-backward-syntactic-ws' to
 ;;   speed them up.  See the comment blurb before `c-put-is-sws'
@@ -162,6 +170,9 @@
 (cc-bytecomp-defvar c-doc-line-join-re)
 (cc-bytecomp-defvar c-doc-bright-comment-start-re)
 (cc-bytecomp-defvar c-doc-line-join-end-ch)
+(cc-bytecomp-defvar c-fl-syn-tab-region)
+(cc-bytecomp-defun c-clear-string-fences)
+(cc-bytecomp-defun c-restore-string-fences)
 
 
 ;; Make declarations for all the `c-lang-defvar' variables in cc-langs.
@@ -2819,7 +2830,9 @@ comment at the start of cc-engine.el for more info."
 				 c-block-comment-awkward-chars)))
 		 (and (nth 4 s) (nth 7 s) ; Line comment
 		      (not (memq (char-before here) '(?\\ ?\n)))))))
-	    (setq s (parse-partial-sexp pos here nil nil s)))
+	    (c-with-extended-string-fences
+	     pos here
+	     (setq s (parse-partial-sexp pos here nil nil s))))
 	  (when (not (eq near-pos here))
 	    (c-semi-put-near-cache-entry here s))
 	  (cond
@@ -2886,7 +2899,7 @@ comment at the start of cc-engine.el for more info."
 		   (setq elt (car nc-list))
 		   (when
 		       (and (car (cddr elt))
-			    (>= here (nth 8 (cadr elt)))
+			    (> here (nth 8 (cadr elt)))
 			    (< here (car (cddr elt))))
 		     (throw 'found elt))
 		   (when
@@ -2905,7 +2918,7 @@ comment at the start of cc-engine.el for more info."
     (copy-tree nc-pos-state)))
 
 (defun c-full-put-near-cache-entry (here state end)
-  ;; Put a new near chace entry into the near cache.
+  ;; Put a new near cache entry into the near cache.
   (while (>= (length c-full-lit-near-cache) 6)
     (setq c-full-lit-near-cache
 	  (delq (car (last c-full-lit-near-cache))
@@ -3004,7 +3017,8 @@ comment at the start of cc-engine.el for more info."
 	    (list s ty (cons start (point))))
 
 	   (t
-	    (c-full-put-near-cache-entry here s nil)
+	    (unless (eq near-base here)
+	      (c-full-put-near-cache-entry here s nil))
 	    (list s))))))))
 
 (defsubst c-truncate-lit-pos-cache (pos)
@@ -7393,7 +7407,7 @@ comment at the start of cc-engine.el for more info."
 	  (when found
 	    (setq c-new-BEG (min (point) c-new-BEG)
 		  c-new-END (point-max))
-	    (c-clear-char-properties (point) c-new-END 'syntax-table)
+	    (c-clear-syn-tab-properties (point) c-new-END)
 	    (c-truncate-lit-pos-cache (point)))))
 
       ;; Are there any raw strings in a newly created macro?
