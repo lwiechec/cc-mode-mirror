@@ -218,10 +218,10 @@
 (defconst c-awk-neutrals*-re
   (concat "\\(" c-awk-neutral-re "\\)*"))
 ;;   A (possibly empty) string of neutral characters (or character pairs).
-(defconst c-awk-var-num-ket-re "[]\)0-9a-zA-Z_$.\x80-\xff]+")
+(defconst c-awk-var-num-ket-re "[])0-9a-zA-Z_$.]+")
 ;;   Matches a char which is a constituent of a variable or number, or a ket
-;; (i.e. closing bracKET), round or square.  Assume that all characters \x80 to
-;; \xff are "letters".
+;; (i.e. closing bracKET), round or square.  (2019-07): No longer assume that
+;; characters \x80 to \xff are "letters".
 (defconst c-awk-div-sign-re
   (concat c-awk-var-num-ket-re c-awk-neutrals*-re "/"))
 ;;   Will match a piece of AWK buffer ending in / which is a division sign, in
@@ -230,7 +230,7 @@
 ;; will only work when there won't be a preceding " or / before the sought /
 ;; to foul things up.
 (defconst c-awk-non-arith-op-bra-re
-  "[[\({&=:!><,?;'~|]")
+  "[[({&=:!><,?;'~|]")
 ;;   Matches an opening BRAcket (of any sort), or any operator character
 ;; apart from +,-,/,*,%.  For the purpose at hand (detecting a / which is a
 ;; regexp bracket) these arith ops are unnecessary and a pain, because of "++"
