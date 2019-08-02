@@ -1408,8 +1408,11 @@ Note that the style variables are always made local to the buffer."
 	    (and c-multiline-string-start-char
 		 (not (c-characterp c-multiline-string-start-char))))
       (when (and (eq end-literal-type 'string)
-		 (not (eq (char-before (cdr end-limits)) ?\()))
-	(c-remove-string-fences (1- (cdr end-limits)))
+		 (not (eq (char-before (cdr end-limits)) ?\())
+		 (memq (char-after (car end-limits)) c-string-delims)
+		 (equal (c-get-char-property (car end-limits) 'syntax-table)
+			'(15)))
+	(c-remove-string-fences (car end-limits))
 	(setq c-new-END (max c-new-END (cdr end-limits))))
 
       (when (and (eq beg-literal-type 'string)
@@ -1846,12 +1849,12 @@ Note that this is a strict tail, so won't match, e.g. \"0x....\".")
     ;; property changes.
     (when (fboundp 'syntax-ppss)
       (setq c-syntax-table-hwm most-positive-fixnum))
-    (unwind-protect
-	(progn
-	  (c-restore-string-fences (point-min) (point-max))
-	  (save-restriction
-	    (save-match-data
-	      (widen)
+    (save-restriction
+      (save-match-data
+	(widen)
+	(unwind-protect
+	    (progn
+	      (c-restore-string-fences (point-min) (point-max))
 	      (save-excursion
 		;; Are we inserting/deleting stuff in the middle of an
 		;; identifier?
@@ -1877,7 +1880,7 @@ Note that this is a strict tail, so won't match, e.g. \"0x....\".")
 				(previous-single-property-change end 'face))
 			   end)))
 		  (when (>= end1 beg) ; Don't hassle about changes entirely in
-				      ; comments.
+					; comments.
 		    ;; Find a limit for the search for a `c-type' property
 		    (while
 			(and (/= (skip-chars-backward "^;{}") 0)
@@ -1905,7 +1908,7 @@ Note that this is a strict tail, so won't match, e.g. \"0x....\".")
 
 			(goto-char end1)
 			(skip-chars-forward "^;{}") ; FIXME!!!  loop for
-						    ; comment, maybe
+					; comment, maybe
 			(setq lim (point))
 			(setq term-pos
 			      (or (c-next-single-property-change end 'c-type nil lim) lim))
@@ -1918,14 +1921,13 @@ Note that this is a strict tail, so won't match, e.g. \"0x....\".")
 		(if c-get-state-before-change-functions
 		    (mapc (lambda (fn)
 			    (funcall fn beg end))
-			  c-get-state-before-change-functions))
-		)))
-	  ;; The following must be done here rather than in `c-after-change'
-	  ;; because newly inserted parens would foul up the invalidation
-	  ;; algorithm.
-	  (c-invalidate-state-cache beg)
-	  (c-truncate-lit-pos-cache beg))
-      (c-clear-string-fences))))
+			  c-get-state-before-change-functions))))
+	  (c-clear-string-fences))))
+    (c-truncate-lit-pos-cache beg)
+    ;; The following must be done here rather than in `c-after-change'
+    ;; because newly inserted parens would foul up the invalidation
+    ;; algorithm.
+    (c-invalidate-state-cache beg)))
 
 (defvar c-in-after-change-fontification nil)
 (make-variable-buffer-local 'c-in-after-change-fontification)
@@ -1969,13 +1971,12 @@ Note that this is a strict tail, so won't match, e.g. \"0x....\".")
       ;; When `combine-after-change-calls' is used we might get calls
       ;; with regions outside the current narrowing.  This has been
       ;; observed in Emacs 20.7.
-      (unwind-protect
-	  (progn
-	    (c-restore-string-fences (point-min) (point-max))
-	    (save-restriction
-	      (save-match-data	  ; c-recognize-<>-arglists changes match-data
-		(widen)
-
+      (save-restriction
+	(save-match-data	  ; c-recognize-<>-arglists changes match-data
+	  (widen)
+	  (unwind-protect
+	      (progn
+		(c-restore-string-fences (point-min) (point-max))
 		(when (> end (point-max))
 		  ;; Some emacsen might return positions past the end. This
 		  ;; has been observed in Emacs 20.7 when rereading a buffer
@@ -2009,8 +2010,8 @@ Note that this is a strict tail, so won't match, e.g. \"0x....\".")
 		(save-excursion
 		  (mapc (lambda (fn)
 			  (funcall fn beg end old-len))
-			c-before-font-lock-functions)))))
-	(c-clear-string-fences))))
+			c-before-font-lock-functions)))
+	    (c-clear-string-fences))))))
   ;; A workaround for syntax-ppss's failure to notice syntax-table text
   ;; property changes.
   (when (fboundp 'syntax-ppss)
