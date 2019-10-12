@@ -794,7 +794,7 @@ IGNORE-LABELS is non-nil.  (FIXME: Doesn't work if we stop at a known
 statement start keyword.)  Otherwise, each label is treated as a
 separate statement.
 
-Macros are ignored \(i.e. skipped over) unless point is within one, in
+Macros are ignored (i.e. skipped over) unless point is within one, in
 which case the content of the macro is treated as normal code.  Aside
 from any normal statement starts found in it, stop at the first token
 of the content in the macro, i.e. the expression of an \"#if\" or the
@@ -1253,7 +1253,7 @@ comment at the start of cc-engine.el for more info."
 			  (save-excursion
 			    (c-forward-sexp) (point)))
 			 ;; Just gone back over some paren block?
-			 ((looking-at "\\s\(")
+			 ((looking-at "\\s(")
 			  (save-excursion
 			    (goto-char (1+ (c-down-list-backward
 					    before-sws-pos)))
@@ -1445,7 +1445,7 @@ The variable `c-maybe-labelp' is set to the position of the first `:' that
 might start a label (i.e. not part of `::' and not preceded by `?').  If a
 single `?' is found, then `c-maybe-labelp' is cleared.
 
-For AWK, a statement which is terminated by an EOL (not a \; or a }) is
+For AWK, a statement which is terminated by an EOL (not a ; or a }) is
 regarded as having a \"virtual semicolon\" immediately after the last token on
 the line.  If this virtual semicolon is _at_ from, the function recognizes it.
 
@@ -4717,7 +4717,7 @@ comment at the start of cc-engine.el for more info."
   "Return non-nil if the point is on or directly after an identifier.
 Keywords are recognized and not considered identifiers.  If an
 identifier is detected, the returned value is its starting position.
-If an identifier ends at the point and another begins at it \(can only
+If an identifier ends at the point and another begins at it (can only
 happen in Pike) then the point for the preceding one is returned.
 
 Note that this function might do hidden buffer changes.  See the
@@ -4856,8 +4856,8 @@ comment at the start of cc-engine.el for more info."
 
 (defconst c-jump-syntax-balanced
   (if (memq 'gen-string-delim c-emacs-features)
-      "\\w\\|\\s_\\|\\s\(\\|\\s\)\\|\\s\"\\|\\s|"
-    "\\w\\|\\s_\\|\\s\(\\|\\s\)\\|\\s\""))
+      "\\w\\|\\s_\\|\\s(\\|\\s)\\|\\s\"\\|\\s|"
+    "\\w\\|\\s_\\|\\s(\\|\\s)\\|\\s\""))
 
 (defconst c-jump-syntax-unbalanced
   (if (memq 'gen-string-delim c-emacs-features)
@@ -4916,7 +4916,7 @@ over the final token in a buffer, up to EOB."
 (defun c-forward-token-2 (&optional count balanced limit)
   "Move forward by tokens.
 A token is defined as all symbols and identifiers which aren't
-syntactic whitespace \(note that multicharacter tokens like \"==\" are
+syntactic whitespace (note that multicharacter tokens like \"==\" are
 treated properly).  Point is always either left at the beginning of a
 token or not moved at all.  COUNT specifies the number of tokens to
 move; a negative COUNT moves in the opposite direction.  A COUNT of 0
@@ -4928,11 +4928,11 @@ LIMIT sets the limit for the movement and defaults to the point limit.
 The case when LIMIT is set in the middle of a token, comment or macro
 is handled correctly, i.e. the point won't be left there.
 
-Return the number of tokens left to move \(positive or negative).  If
+Return the number of tokens left to move (positive or negative).  If
 BALANCED is true, a move over a balanced paren counts as one.  Note
 that if COUNT is 0 and no appropriate token beginning is found, 1 will
 be returned.  Thus, a return value of 0 guarantees that point is at
-the requested position and a return value less \(without signs) than
+the requested position and a return value less (without signs) than
 COUNT guarantees that point is at the beginning of some token.
 
 Note that this function might do hidden buffer changes.  See the
@@ -5041,7 +5041,7 @@ See `c-forward-token-2' for details."
 tokens like \"==\" as single tokens, i.e. all sequences of symbol
 characters are jumped over character by character.  This function is
 for compatibility only; it's only a wrapper over `c-forward-token-2'."
-  (let ((c-nonsymbol-token-regexp "\\s.\\|\\s\(\\|\\s\)"))
+  (let ((c-nonsymbol-token-regexp "\\s.\\|\\s(\\|\\s)"))
     (c-forward-token-2 count balanced limit)))
 
 (defun c-backward-token-1 (&optional count balanced limit)
@@ -5049,7 +5049,7 @@ for compatibility only; it's only a wrapper over `c-forward-token-2'."
 tokens like \"==\" as single tokens, i.e. all sequences of symbol
 characters are jumped over character by character.  This function is
 for compatibility only; it's only a wrapper over `c-backward-token-2'."
-  (let ((c-nonsymbol-token-regexp "\\s.\\|\\s\(\\|\\s\)"))
+  (let ((c-nonsymbol-token-regexp "\\s.\\|\\s(\\|\\s)"))
     (c-backward-token-2 count balanced limit)))
 
 
@@ -5076,7 +5076,7 @@ inside a literal there.
 If PAREN-LEVEL is non-nil, an additional restriction is added to
 ignore matches in nested paren sexps.  The search will also not go
 outside the current list sexp, which has the effect that if the point
-should be moved to BOUND when no match is found \(i.e. NOERROR is
+should be moved to BOUND when no match is found (i.e. NOERROR is
 neither nil nor t), then it will be at the closing paren if the end of
 the current list sexp is encountered first.
 
@@ -5101,7 +5101,7 @@ hand not safe to assume that the \"look behind\" subexpression never
 matches syntactic whitespace.
 
 Bug: Unbalanced parens inside cpp directives are currently not handled
-correctly \(i.e. they don't get ignored as they should) when
+correctly (i.e. they don't get ignored as they should) when
 PAREN-LEVEL is set.
 
 Note that this function might do hidden buffer changes.  See the
@@ -8976,7 +8976,7 @@ point unchanged and return nil."
 
 	 ;; Search syntactically to the end of the declarator (";",
 	 ;; ",", a closing paren, eob etc) or to the beginning of an
-	 ;; initializer or function prototype ("=" or "\\s\(").
+	 ;; initializer or function prototype ("=" or "\\s(").
 	 ;; Note that square brackets are now not also treated as
 	 ;; initializers, since this broke when there were also
 	 ;; initializing brace lists.
@@ -9674,7 +9674,7 @@ This function might do hidden buffer changes."
 		  (setq paren-depth (1- paren-depth))
 		  (forward-char)
 		  t)
-	      (when (if (save-match-data (looking-at "\\s\("))
+	      (when (if (save-match-data (looking-at "\\s("))
 			(c-safe (c-forward-sexp 1) t)
 		      (goto-char (match-end 1))
 		      t)
@@ -9779,7 +9779,7 @@ This function might do hidden buffer changes."
 
 	 (setq at-decl-end
 	       (looking-at (cond ((eq context '<>) "[,>]")
-				 ((not (memq context '(nil top))) "[,\)]")
+				 ((not (memq context '(nil top))) "[,)]")
 				 (t "[,;]"))))
 
 	 ;; Now we've collected info about various characteristics of
@@ -10165,7 +10165,7 @@ This function might do hidden buffer changes."
 	 ;; The closing paren should follow.
 	 (progn
 	   (c-forward-syntactic-ws)
-	   (looking-at "\\s\)"))
+	   (looking-at "\\s)"))
 
 	 ;; There should be a primary expression after it.
 	 (let (pos)
@@ -10565,7 +10565,7 @@ This function might do hidden buffer changes."
 
 	  (catch 'break
 	    ;; Look for ": superclass-name" or "( category-name )".
-	    (when (looking-at "[:\(]")
+	    (when (looking-at "[:(]")
 	      (setq start-char (char-after))
 	      (forward-char)
 	      (c-forward-syntactic-ws)
@@ -11133,7 +11133,7 @@ comment at the start of cc-engine.el for more info."
 			  ;; Check for `c-opt-block-decls-with-vars-key'
 			  ;; before the first paren.
 			  (c-syntactic-re-search-forward
-			   (concat "[;=\(\[{]\\|\\("
+			   (concat "[;=([{]\\|\\("
 				   c-opt-block-decls-with-vars-key
 				   "\\)")
 			   lim t t t)
@@ -11141,7 +11141,7 @@ comment at the start of cc-engine.el for more info."
 			  (not (eq (char-before) ?_))
 			  ;; Check that the first following paren is
 			  ;; the block.
-			  (c-syntactic-re-search-forward "[;=\(\[{]"
+			  (c-syntactic-re-search-forward "[;=([{]"
 							 lim t t t)
 			  (eq (char-before) ?{))))))
 	    ;; The declaration doesn't have any of the
@@ -11911,7 +11911,7 @@ comment at the start of cc-engine.el for more info."
 			 (> (point) closest-lim))
 		  (not (bobp))
 		  (progn (backward-char)
-			 (looking-at "[\]\).]\\|\\w\\|\\s_"))
+			 (looking-at "[]).]\\|\\w\\|\\s_"))
 		  (c-safe (forward-char)
 			  (goto-char (scan-sexps (point) -1))))
 

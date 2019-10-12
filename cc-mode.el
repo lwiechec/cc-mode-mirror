@@ -358,7 +358,7 @@ control).  See \"cc-mode.el\" for more info."
     ;; to special combinations like C-c C-<delete>, so we have to hook
     ;; into the `normal-erase-is-backspace' system to bind it directly
     ;; as appropriate.
-    (add-hook 'normal-erase-is-backspace-hook 'c-bind-special-erase-keys)
+    (add-hook 'normal-erase-is-backspace-mode-hook 'c-bind-special-erase-keys)
     (c-bind-special-erase-keys))
 
   (when (fboundp 'delete-forward-p)
@@ -1379,7 +1379,7 @@ Note that the style variables are always made local to the buffer."
 
       ;; Move to end of logical line (as it will be after the change, or as it
       ;; was before unescaping a NL.)
-      (re-search-forward "\\(\\\\\\(.\\|\n\\|\r\\)\\|[^\\\n\r]\\)*" nil t)
+      (re-search-forward "\\(\\\\\\(.\\|\n\\)\\|[^\\\n\r]\\)*" nil t)
       ;; We're at an EOLL or point-max.
       (if (equal (c-get-char-property (point) 'syntax-table) '(15))
 	  (if (memq (char-after) '(?\n ?\r))
@@ -1487,7 +1487,7 @@ Note that the style variables are always made local to the buffer."
 	   (progn
 	     (goto-char (min (1+ end)	; 1+, in case a NL has become escaped.
 			     (point-max)))
-	     (re-search-forward "\\(\\\\\\(.\\|\n\\|\r\\)\\|[^\\\n\r]\\)*"
+	     (re-search-forward "\\(\\\\\\(.\\|\n\\)\\|[^\\\n\r]\\)*"
 				nil t)
 	     (point))
 	   c-new-END))
@@ -1518,7 +1518,7 @@ Note that the style variables are always made local to the buffer."
 	(unless (and (c-major-mode-is 'c++-mode)
 		     (c-maybe-re-mark-raw-string))
 	  (if (c-unescaped-nls-in-string-p (1- (point)))
-	      (looking-at "\\(\\\\\\(.\\|\n\\|\r\\)\\|[^\"]\\)*")
+	      (looking-at "\\(\\\\\\(.\\|\n\\)\\|[^\"]\\)*")
 	    (looking-at (cdr (assq (char-before) c-string-innards-re-alist))))
 	  (cond
 	   ((memq (char-after (match-end 0)) '(?\n ?\r))

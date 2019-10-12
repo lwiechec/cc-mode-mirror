@@ -96,7 +96,7 @@
 ;; Emacs has in the past used \r to mark hidden lines in some fashion (and
 ;; maybe still does).
 
-(defconst c-awk-esc-pair-re "\\\\\\(.\\|\n\\|\r\\|\\'\\)")
+(defconst c-awk-esc-pair-re "\\\\\\(.\\|\n\\|\\'\\)")
 ;;   Matches any escaped (with \) character-pair, including an escaped newline.
 (defconst c-awk-non-eol-esc-pair-re "\\\\\\(.\\|\\'\\)")
 ;;   Matches any escaped (with \) character-pair, apart from an escaped newline.
@@ -269,7 +269,7 @@
 ;; Matches optional whitespace followed by a "/" with string syntax (a matched
 ;; regexp delimiter).
 (defconst c-awk-space*-unclosed-regexp-/-re
-  (concat c-awk-escaped-nls*-with-space* "\\s\|"))
+  (concat c-awk-escaped-nls*-with-space* "\\s|"))
 ;; Matches optional whitespace followed by a "/" with string fence syntax (an
 ;; unmatched regexp delimiter).
 

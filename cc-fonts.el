@@ -580,10 +580,10 @@ stuff.  Used on level 1 and higher."
 			       c-symbol-key) "\\)"
 			(concat "\\("	; 2 + ncle + nsws + c-sym-key
 				;; Macro with arguments - a "function".
-				"\\(\(\\)" ; 3 + ncle + nsws + c-sym-key
+				"\\((\\)" ; 3 + ncle + nsws + c-sym-key
 				"\\|"
 				;; Macro without arguments - a "variable".
-				"\\([^\(]\\|$\\)"
+				"\\([^(]\\|$\\)"
 				"\\)"))
 		       `((if (match-beginning
 			      ,(+ 3 ncle-depth nsws-depth
@@ -2275,7 +2275,7 @@ need for `c-font-lock-extra-types'.")
 		  (unless (looking-at
 			   (cc-eval-when-compile
 			     (concat (c-lang-const c-symbol-start c++)
-				     "\\|[*:\)\[]")))
+				     "\\|[*:)[]")))
 		    ;; There's something after the would-be type that
 		    ;; can't be there, so this is a placement arglist.
 		    (setq expr1-res nil)))
@@ -2285,7 +2285,7 @@ need for `c-font-lock-extra-types'.")
 		  (unless (looking-at
 			   (cc-eval-when-compile
 			     (concat (c-lang-const c-symbol-start c++)
-				     "\\|[*:\)\[]")))
+				     "\\|[*:)[]")))
 		    ;; There's something after the would-be type that can't
 		    ;; be there, so this is an initialization expression.
 		    (setq expr2-res nil))
@@ -2922,7 +2922,7 @@ need for `pike-font-lock-extra-types'.")
   nil)
 
 (defconst autodoc-font-lock-doc-comments
-  `(("@\\(\\w+{\\|\\[\\([^\]@\n\r]\\|@@\\)*\\]\\|[@}]\\|$\\)"
+  `(("@\\(\\w+{\\|\\[\\([^]@\n\r]\\|@@\\)*\\]\\|[@}]\\|$\\)"
      ;; In-text markup.
      0 ,c-doc-markup-face-name prepend nil)
     (autodoc-font-lock-line-markup)

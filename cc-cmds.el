@@ -65,9 +65,9 @@ syntactic information for the current line.  Be silent about syntactic
 errors if the optional argument QUIET is non-nil, even if
 `c-report-syntactic-errors' is non-nil.  Normally the position of
 point is used to decide where the old indentation is on a lines that
-is otherwise empty \(ignoring any line continuation backslash), but
+is otherwise empty (ignoring any line continuation backslash), but
 that's not done if IGNORE-POINT-POS is non-nil.  Returns the amount of
-indentation change \(in columns)."
+indentation change (in columns)."
 
   (let ((line-cont-backslash (save-excursion
 			       (end-of-line)
@@ -1442,13 +1442,13 @@ No indentation or other \"electric\" behavior is performed."
 		;; be the return type of a function, or the like.  Exclude
 		;; this case.
 		(c-syntactic-re-search-forward
-		 (concat "[;=\(\[{]\\|\\("
+		 (concat "[;=([{]\\|\\("
 			 c-opt-block-decls-with-vars-key
 			 "\\)")
 		 eo-block t t t)
 		(match-beginning 1)	; Is there a "struct" etc., somewhere?
 		(not (eq (char-before) ?_))
-		(c-syntactic-re-search-forward "[;=\(\[{]" eo-block t t t)
+		(c-syntactic-re-search-forward "[;=([{]" eo-block t t t)
 		(eq (char-before) ?\{)
 		;; Exclude the entire "struct {...}" being the type of a
 		;; function being declared.
@@ -2182,7 +2182,7 @@ A mark is left where the command started.
 As opposed to \\[c-beginning-of-defun] and \\[c-end-of-defun], this
 function does not require the declaration to contain a brace block."
   ;; Middle sentence of doc-string was: A mark is left where the command
-  ;; started, unless the region is already active \(in Transient Mark mode).
+  ;; started, unless the region is already active (in Transient Mark mode).
   ;; FIXME!!!  for transient-mark/zemacs sometime.  (2012-03-08.)
   (interactive)
 
@@ -3218,7 +3218,7 @@ to call `c-scan-conditionals' directly instead."
 A prefix argument acts as a repeat count.  With a negative argument,
 move backward across a preprocessor conditional.
 
-If there aren't enough conditionals after \(or before) point, an
+If there aren't enough conditionals after (or before) point, an
 error is signaled.
 
 \"#elif\" is treated like \"#else\" followed by \"#if\", except that
@@ -4623,7 +4623,7 @@ is in situations like the following:
 
 char description[] = \"\\
 A very long description of something that you want to fill to make
-nicely formatted output.\"\;
+nicely formatted output.\";
 
 If point is in any other situation, i.e. in normal code, do nothing.
 

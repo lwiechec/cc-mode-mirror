@@ -530,7 +530,7 @@ buffer local variables c-new-BEG and c-new-END.
 The functions are called even when font locking is disabled.
 
 When the mode is initialized, these functions are called with
-parameters \(point-min), \(point-max) and <buffer size>.")
+parameters (point-min), (point-max) and <buffer size>.")
 
 (c-lang-defconst c-before-context-fontification-functions
   t 'c-context-expand-fl-region
@@ -863,7 +863,7 @@ literal are multiline."
   t (mapcar (lambda (delim)
 	      (cons
 	       delim
-	       (concat "\\(\\\\\\(.\\|\n\\|\r\\)\\|[^\\\n\r"
+	       (concat "\\(\\\\\\(.\\|\n\\)\\|[^\\\n\r"
 		       (string delim)
 		       "]\\)*")))
 	    (and
@@ -952,7 +952,7 @@ definition, or nil if the language doesn't have any."
   t (if (c-lang-const c-opt-cpp-macro-define)
 	(concat (c-lang-const c-opt-cpp-prefix)
 		(c-lang-const c-opt-cpp-macro-define)
-		"[ \t]+\\(\\(\\sw\\|_\\)+\\)\\(\([^\)]*\)\\)?"
+		"[ \t]+\\(\\(\\sw\\|_\\)+\\)\\(([^)]*)\\)?"
 		;;       ^                 ^ #defined name
 		"\\([ \t]\\|\\\\\n\\)*")))
 (c-lang-defvar c-opt-cpp-macro-define-start
@@ -1325,7 +1325,7 @@ operators."
   t (c-make-keywords-re nil
       (c-filter-ops (c-lang-const c-all-op-syntax-tokens)
 		    t
-		    "\\`\\(\\s.\\|\\s\(\\|\\s\)\\)+\\'")))
+		    "\\`\\(\\s.\\|\\s(\\|\\s)\\)+\\'")))
 (c-lang-defvar c-nonsymbol-token-regexp
   (c-lang-const c-nonsymbol-token-regexp))
 
@@ -2046,7 +2046,7 @@ be a subset of `c-primitive-type-kwds'."
 	    "strong"))
 
 (c-lang-defconst c-typedef-kwds
-  "Prefix keyword\(s\) like \"typedef\" which make a type declaration out
+  "Prefix keyword(s) like \"typedef\" which make a type declaration out
 of a variable declaration."
   t        '("typedef")
   (awk idl java) nil)
@@ -2323,7 +2323,7 @@ will be handled."
 (c-lang-defvar c-typedef-decl-key (c-lang-const c-typedef-decl-key))
 
 (c-lang-defconst c-typeless-decl-kwds
-  "Keywords introducing declarations where the \(first) identifier
+  "Keywords introducing declarations where the (first) identifier
 \(declarator) follows directly after the keyword, without any type.
 
 If any of these also are on `c-type-list-kwds', `c-ref-list-kwds',
@@ -2427,7 +2427,7 @@ Note that unrecognized plain symbols are skipped anyway if they occur
 before the type, so such things are not necessary to mention here.
 Mentioning them here is necessary only if they can occur in other
 places, or if they are followed by a construct that must be skipped
-over \(like the parens in the \"__attribute__\" and \"__declspec\"
+over (like the parens in the \"__attribute__\" and \"__declspec\"
 examples above).  In the last case, they alse need to be present on
 one of `c-type-list-kwds', `c-ref-list-kwds',
 `c-colon-type-list-kwds', `c-paren-nontype-kwds', `c-paren-type-kwds',
@@ -2559,7 +2559,7 @@ The keywords on list are assumed to also be present on one of the
 
 (c-lang-defconst c-postfix-decl-spec-kwds
   "Keywords introducing extra declaration specifiers in the region
-between the header and the body \(i.e. the \"K&R-region\") in
+between the header and the body (i.e. the \"K&R-region\") in
 declarations."
   t    nil
   java '("extends" "implements" "throws")
@@ -2653,10 +2653,10 @@ regexp if `c-colon-type-list-kwds' isn't nil."
 	;; or "struct" in C++.  (Also used as default for other
 	;; languages.)
 	(if (c-lang-const c-opt-identifier-concat-key)
-	    (concat "\\([^\]\[{}();,/#=:]\\|"
+	    (concat "\\([^][{}();,/#=:]\\|"
 		    (c-lang-const c-opt-identifier-concat-key)
 		    "\\)*:")
-	  "[^\]\[{}();,/#=:]*:")))
+	  "[^][{}();,/#=:]*:")))
 (c-lang-defvar c-colon-type-list-re (c-lang-const c-colon-type-list-re))
 
 (c-lang-defconst c-paren-nontype-kwds
@@ -2842,7 +2842,7 @@ nevertheless contains a list separated with ';' and not ','."
 (c-lang-defvar c-opt-asm-stmt-key (c-lang-const c-opt-asm-stmt-key))
 
 (c-lang-defconst c-case-kwds
-  "The keyword\(s) which introduce a \"case\" like construct.
+  "The keyword(s) which introduce a \"case\" like construct.
 This construct is \"<keyword> <expression> :\"."
   t '("case")
   awk nil)
@@ -2908,7 +2908,7 @@ expressions."
 
 (c-lang-defconst c-inexpr-block-kwds
   "Keywords that start constructs followed by statement blocks which can
-be used in expressions \(the gcc extension for this in C and C++ is
+be used in expressions (the gcc extension for this in C and C++ is
 handled separately by `c-recognize-paren-inexpr-blocks')."
   t    nil
   pike '("catch" "gauge"))
@@ -3240,25 +3240,25 @@ more info."
   ;; more quickly.  We match ")" in C for K&R region declarations, and
   ;; in all languages except Java for when a cpp macro definition
   ;; begins with a declaration.
-  t "\\([\{\}\(\);,]+\\)"
-  java "\\([\{\}\(;,<]+\\)"
+  t "\\([{}();,]+\\)"
+  java "\\([{}(;,<]+\\)"
   ;; Match "<" in C++ to get the first argument in a template arglist.
   ;; In that case there's an additional check in `c-find-decl-spots'
   ;; that it got open paren syntax.  Match ":" to aid in picking up
   ;; "public:", etc.  This involves additional checks in
   ;; `c-find-decl-prefix-search' to prevent a match of identifiers
   ;; or labels.
-  c++ "\\([\{\}\(\);:,<]+\\)"
+  c++ "\\([{}();:,<]+\\)"
   ;; Additionally match the protection directives in Objective-C.
   ;; Note that this doesn't cope with the longer directives, which we
   ;; would have to match from start to end since they don't end with
   ;; any easily recognized characters.
-  objc (concat "\\([\{\}\(\);,]+\\|"
+  objc (concat "\\([{}();,]+\\|"
 	       (c-make-keywords-re nil (c-lang-const c-protection-kwds))
 	       "\\)")
   ;; Pike is like C but we also match "[" for multiple value
   ;; assignments and type casts.
-  pike "\\([\{\}\(\)\[;,]+\\)")
+  pike "\\([{}()[;,]+\\)")
 (c-lang-defvar c-decl-prefix-re (c-lang-const c-decl-prefix-re)
   'dont-doc)
 
@@ -3318,7 +3318,7 @@ constructs."
   ;; languages without casts.
   t (c-filter-ops (c-lang-const c-operators)
 		  '(prefix)
-		  "\\`\\s\(\\'"
+		  "\\`\\s(\\'"
 		  (lambda (op) (elt op 0))))
 (c-lang-defvar c-cast-parens (c-lang-const c-cast-parens))
 
@@ -3392,7 +3392,7 @@ possible for good performance."
 identifier in a declaration, e.g. the \"*\" in \"char *argv\".  This
 regexp should match \"(\" if parentheses are valid in declarators.
 The end of the first submatch is taken as the end of the operator.
-Identifier syntax is in effect when this is matched \(see
+Identifier syntax is in effect when this is matched (see
 `c-identifier-syntax-table')."
   t (if (c-lang-const c-type-modifier-kwds)
 	(concat (regexp-opt (c-lang-const c-type-modifier-kwds) t) "\\>")
@@ -3401,7 +3401,7 @@ Identifier syntax is in effect when this is matched \(see
   ;; Check that there's no "=" afterwards to avoid matching tokens
   ;; like "*=".
   (c objc) (concat "\\("
-		   "[*\(]"
+		   "[*(]"
 		   "\\|"
 		   (c-lang-const c-type-decl-prefix-key)
 		   "\\)"
@@ -3433,7 +3433,7 @@ Identifier syntax is in effect when this is matched \(see
 that might precede the identifier in a declaration, e.g. the
 \"*\" in \"char *argv\".  The end of the first submatch is taken
 as the end of the operator.  Identifier syntax is in effect when
-this is matched \(see `c-identifier-syntax-table')."
+this is matched (see `c-identifier-syntax-table')."
   t ;; Default to a regexp that never matches.
     "\\`a\\`"
   ;; Check that there's no "=" afterwards to avoid matching tokens
@@ -3461,13 +3461,13 @@ is in effect when this is matched (see `c-identifier-syntax-table')."
   ;; Default to a regexp that matches `c-type-modifier-kwds' and a
   ;; function argument list parenthesis.
   t    (if (c-lang-const c-type-modifier-kwds)
-	   (concat "\\(\(\\|"
+	   (concat "\\((\\|"
 		   (regexp-opt (c-lang-const c-type-modifier-kwds) t) "\\>"
 		   "\\)")
-	 "\\(\(\\)")
+	 "\\((\\)")
   (c c++ objc) (concat
 		"\\("
-		"[\)\[\(]"
+		"[)[(]"
 		(if (c-lang-const c-type-modifier-kwds)
 		    (concat
 		     "\\|"
@@ -3478,8 +3478,8 @@ is in effect when this is matched (see `c-identifier-syntax-table')."
 		     "\\>")
 		  "")
 		"\\)")
-  java "\\([\[\(\)]\\)"
-  idl "\\([\[\(]\\)")
+  java "\\([[()]\\)"
+  idl "\\([[(]\\)")
 (c-lang-defvar c-type-decl-suffix-key (c-lang-const c-type-decl-suffix-key)
   'dont-doc)
 
@@ -3702,7 +3702,7 @@ i.e. compound statements surrounded by parentheses inside expressions."
   t (if (c-lang-const c-opt-<>-arglist-start)
 	(concat "\\("
 		(c-lang-const c-opt-<>-arglist-start)
-		"\\)\\|\\s\)")))
+		"\\)\\|\\s)")))
 (c-lang-defvar c-opt-<>-arglist-start-in-paren
   (c-lang-const c-opt-<>-arglist-start-in-paren))
 
@@ -3759,7 +3759,7 @@ i.e. before \":\".  Only used if `c-recognize-colon-labels' is set."
   ;; Also check for open parens in C++, to catch member init lists in
   ;; constructors.  We normally allow it so that macros with arguments
   ;; work in labels.
-  c++ (concat "\\s\(\\|\"\\|" (c-lang-const c-nonlabel-token-key)))
+  c++ (concat "\\s(\\|\"\\|" (c-lang-const c-nonlabel-token-key)))
 (c-lang-defvar c-nonlabel-token-key (c-lang-const c-nonlabel-token-key))
 
 (c-lang-defconst c-nonlabel-nonparen-token-key
@@ -3832,7 +3832,7 @@ way."
 	"\\([+-]\\)"
 	(c-lang-const c-simple-ws) "*"
 	(concat "\\("			; Return type.
-		"([^\)]*)"
+		"([^)]*)"
 		(c-lang-const c-simple-ws) "*"
 		"\\)?")
 	"\\(" (c-lang-const c-symbol-key) "\\)"))
