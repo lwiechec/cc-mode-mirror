@@ -9045,7 +9045,7 @@ point unchanged and return nil."
 			   (if (looking-at c-:-op-cont-regexp)
 			       (progn (goto-char (match-end 0)) t)
 			     (not
-			      (and (c-major-mode-is 'c++-mode)
+			      (and (c-major-mode-is '(c++-mode java-mode))
 				   (save-excursion
 				     (and
 				      (c-go-up-list-backward)
