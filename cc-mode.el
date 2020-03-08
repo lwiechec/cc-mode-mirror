@@ -261,6 +261,29 @@ control).  See \"cc-mode.el\" for more info."
       (setq defs (cdr defs)))))
 (put 'c-define-abbrev-table 'lisp-indent-function 1)
 
+(defun c-populate-abbrev-table ()
+  ;; Insert the standard keywords which may need electric indentation into the
+  ;; current mode's abbreviation table.
+  (let ((table (intern (concat (symbol-name major-mode) "-abbrev-table")))
+	(defs c-std-abbrev-keywords)
+	)
+    (unless (and (boundp table)
+		 (abbrev-table-p (symbol-value table)))
+      (define-abbrev-table table nil))
+    (setq local-abbrev-table (symbol-value table))
+    (while defs
+      (unless (intern-soft (car defs) local-abbrev-table) ; Don't overwrite the
+					; abbrev's use count.
+	(condition-case nil
+	    (define-abbrev (symbol-value table)
+	      (car defs) (car defs)
+	      'c-electric-continued-statement 0 t)
+	  (wrong-number-of-arguments
+	   (define-abbrev (symbol-value table)
+	     (car defs) (car defs)
+	     'c-electric-continued-statement 0))))
+      (setq defs (cdr defs)))))
+
 (defun c-bind-special-erase-keys ()
   ;; Only used in Emacs to bind C-c C-<delete> and C-c C-<backspace>
   ;; to the proper keys depending on `normal-erase-is-backspace'.
@@ -530,6 +553,8 @@ This function cannot do that since `c-init-language-vars' is a macro
 that requires a literal mode spec at compile time."
 
   (setq c-buffer-is-cc-mode mode)
+
+  (c-populate-abbrev-table)
 
   ;; these variables should always be buffer local; they do not affect
   ;; indentation style.
@@ -2463,7 +2488,6 @@ Key bindings:
   (set-syntax-table c-mode-syntax-table)
   (setq major-mode 'c-mode
 	mode-name "C"
-	local-abbrev-table c-mode-abbrev-table
 	abbrev-mode t)
   (use-local-map c-mode-map)
   (c-init-language-vars-for 'c-mode)
@@ -2560,7 +2584,6 @@ Key bindings:
   (set-syntax-table c++-mode-syntax-table)
   (setq major-mode 'c++-mode
 	mode-name "C++"
-	local-abbrev-table c++-mode-abbrev-table
 	abbrev-mode t)
   (use-local-map c++-mode-map)
   (c-init-language-vars-for 'c++-mode)
@@ -2621,7 +2644,6 @@ Key bindings:
   (set-syntax-table objc-mode-syntax-table)
   (setq major-mode 'objc-mode
 	mode-name "ObjC"
-	local-abbrev-table objc-mode-abbrev-table
 	abbrev-mode t)
   (use-local-map objc-mode-map)
   (c-init-language-vars-for 'objc-mode)
@@ -2690,7 +2712,6 @@ Key bindings:
   (set-syntax-table java-mode-syntax-table)
   (setq major-mode 'java-mode
  	mode-name "Java"
- 	local-abbrev-table java-mode-abbrev-table
 	abbrev-mode t)
   (use-local-map java-mode-map)
   (c-init-language-vars-for 'java-mode)
@@ -2745,8 +2766,7 @@ Key bindings:
   (c-initialize-cc-mode t)
   (set-syntax-table idl-mode-syntax-table)
   (setq major-mode 'idl-mode
-	mode-name "IDL"
-	local-abbrev-table idl-mode-abbrev-table)
+	mode-name "IDL")
   (use-local-map idl-mode-map)
   (c-init-language-vars-for 'idl-mode)
   (c-common-init 'idl-mode)
@@ -2805,7 +2825,6 @@ Key bindings:
   (set-syntax-table pike-mode-syntax-table)
   (setq major-mode 'pike-mode
  	mode-name "Pike"
- 	local-abbrev-table pike-mode-abbrev-table
 	abbrev-mode t)
   (use-local-map pike-mode-map)
   (c-init-language-vars-for 'pike-mode)
@@ -2873,7 +2892,6 @@ Key bindings:
   (set-syntax-table awk-mode-syntax-table)
   (setq major-mode 'awk-mode
 	mode-name "AWK"
-	local-abbrev-table awk-mode-abbrev-table
 	abbrev-mode t)
   (use-local-map awk-mode-map)
   (c-init-language-vars-for 'awk-mode)
