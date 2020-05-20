@@ -778,7 +778,7 @@ compatible with old code; callers should always specify it."
     (make-local-variable 'add-log-current-defun-function)
     (setq add-log-current-defun-function
 	  (lambda ()
-	    (or (c-cpp-define-name) (c-defun-name)))))
+	    (or (c-cpp-define-name) (car (c-defun-name-and-limits nil))))))
 
   (let ((rfn (assq mode c-require-final-newline)))
     (when rfn
