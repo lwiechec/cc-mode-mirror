@@ -2402,7 +2402,8 @@ If any of these also are on `c-type-list-kwds', `c-ref-list-kwds',
 `c-<>-type-kwds', or `c-<>-arglist-kwds' then the associated clauses
 will be handled."
   t       nil
-  objc    '("@class" "@end" "@defs")
+  objc    '("@class" "@defs" "@end" "@property" "@dynamic" "@synthesize"
+	    "@compatibility_alias")
   java    '("import" "package")
   pike    '("import" "inherit"))
 
@@ -2525,7 +2526,9 @@ one of `c-type-list-kwds', `c-ref-list-kwds',
   "Access protection label keywords in classes."
   t    nil
   c++  '("private" "protected" "public")
-  objc '("@private" "@protected" "@public"))
+  objc '("@private" "@protected" "@package" "@public"
+	 "@required" "@optional"))
+
 
 (c-lang-defconst c-protection-key
   ;; A regexp match an element of `c-protection-kwds' cleanly.
@@ -2740,6 +2743,7 @@ identifiers that follows the type in a normal declaration."
   "Statement keywords followed directly by a substatement."
   t    '("do" "else")
   c++  '("do" "else" "try")
+  objc '("do" "else" "@finally" "@try" "@autoreleasepool")
   java '("do" "else" "finally" "try")
   idl  nil)
 
@@ -2880,7 +2884,8 @@ This construct is \"<keyword> <expression> :\"."
   c++     (append
            '("nullptr")
            (c-lang-const c-constant-kwds c))
-  objc    '("nil" "Nil" "YES" "NO" "NS_DURING" "NS_HANDLER" "NS_ENDHANDLER")
+  objc    '("nil" "Nil" "YES" "NO" "IBAction" "IBOutlet"
+	    "NS_DURING" "NS_HANDLER" "NS_ENDHANDLER")
   idl     '("TRUE" "FALSE")
   java    '("true" "false" "null") ; technically "literals", not keywords
   pike	  '("UNDEFINED")) ;; Not a keyword, but practically works as one.
