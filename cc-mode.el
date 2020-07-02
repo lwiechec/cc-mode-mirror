@@ -2557,14 +2557,22 @@ Key bindings:
 
 (defconst c-or-c++-mode--regexp
   (eval-when-compile
-    (let ((id "[a-zA-Z0-9_]+") (ws "[ \t\n\r]+") (ws-maybe "[ \t\n\r]*"))
+    (let ((id "[a-zA-Z_][a-zA-Z0-9_]*") (ws "[ \t]+") (ws-maybe "[ \t]*")
+          (headers '("string" "string_view" "iostream" "map" "unordered_map"
+                     "set" "unordered_set" "vector" "tuple")))
       (concat "^" ws-maybe "\\(?:"
-	      "using"     ws "\\(?:namespace" ws "std;\\|std::\\)"
-	      "\\|" "namespace" "\\(:?" ws id "\\)?" ws-maybe "{"
-	      "\\|" "class"     ws id ws-maybe "[:{\n]"
-	      "\\|" "template"  ws-maybe "<.*>"
-	      "\\|" "#include"  ws-maybe "<\\(?:string\\|iostream\\|map\\)>"
-	      "\\)")))
+                    "using"     ws "\\(?:namespace" ws
+                                     "\\|" id "::"
+                                     "\\|" id ws-maybe "=\\)"
+              "\\|" "\\(?:inline" ws "\\)?namespace"
+                    "\\(:?" ws "\\(?:" id "::\\)*" id "\\)?" ws-maybe "{"
+              "\\|" "class"     ws id
+                    "\\(?:" ws "final" "\\)?" ws-maybe "[:{;\n]"
+              "\\|" "struct"     ws id "\\(?:" ws "final" ws-maybe "[:{\n]"
+                                         "\\|" ws-maybe ":\\)"
+              "\\|" "template"  ws-maybe "<.*?>"
+              "\\|" "#include"  ws-maybe "<" (regexp-opt headers) ">"
+              "\\)")))
   "A regexp applied to C header files to check if they are really C++.")
 
 ;;;###autoload
@@ -2579,6 +2587,7 @@ should be used.
 This function attempts to use file contents to determine whether
 the code is C or C++ and based on that chooses whether to enable
 `c-mode' or `c++-mode'."
+  (interactive)
   (if (save-excursion
 	(save-restriction
 	  (save-match-data
