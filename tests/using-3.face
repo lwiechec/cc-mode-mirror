@@ -1,0 +1,11 @@
+(0 key) (5 reg) (6 typ) (7 reg)
+(0 key) (9 reg)
+(4 typ) (7 reg) (8 var) (11 reg)
+(4 typ) (7 reg) (8 var) (11 reg)
+
+
+(0 key) (5 reg) (6 typ) (7 reg) (10 typ) (11 reg)
+(4 key) (9 reg) (10 ref) (11 reg) (18 ref) (19 reg)
+
+
+
