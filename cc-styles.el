@@ -401,8 +401,7 @@ a null operation."
       ;; remain.  This is not necessary for c-offsets-alist, since
       ;; c-get-style-variables contains every valid offset type in the
       ;; fallback entry.
-      (setq c-special-indent-hook
-	    (default-value 'c-special-indent-hook)))
+      (kill-local-variable 'c-special-indent-hook))
     (mapc (lambda (elem)
 	    (c-set-style-1 elem dont-override))
 	  ;; Need to go through the variables backwards when we
@@ -651,7 +650,7 @@ CC Mode by making sure the proper entries are present on
 
 (defun c-make-styles-buffer-local (&optional this-buf-only-p)
   "Make all CC Mode style variables buffer local.
-If `this-buf-only-p' is non-nil, the style variables will be made
+If THIS-BUF-ONLY-P is non-nil, the style variables will be made
 buffer local only in the current buffer.  Otherwise they'll be made
 permanently buffer local in any buffer that changes their values.
 
@@ -670,7 +669,6 @@ any reason to call this function directly."
     (if this-buf-only-p
 	(or (memq 'add-hook-local c-emacs-features)
 	   (make-local-hook 'c-special-indent-hook))
-      (make-variable-buffer-local 'c-special-indent-hook)
       (setq c-style-variables-are-local-p t))
     ))
 
