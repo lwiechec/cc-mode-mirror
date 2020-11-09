@@ -1003,7 +1003,7 @@ Note that the style variables are always made local to the buffer."
       (c-clear-char-property-with-value
        m-beg (point) 'syntax-table '(1)))))
 
-(defun c-extend-region-for-CPP (beg end)
+(defun c-extend-region-for-CPP (_beg _end)
   ;; Adjust `c-new-BEG', `c-new-END' respectively to the beginning and end of
   ;; any preprocessor construct they may be in.
   ;;
@@ -1027,7 +1027,7 @@ Note that the style variables are always made local to the buffer."
   (when (> (point) c-new-END)
     (setq c-new-END (min (point) (c-determine-+ve-limit 500 c-new-END)))))
 
-(defun c-depropertize-new-text (beg end old-len)
+(defun c-depropertize-new-text (beg end _old-len)
   ;; Remove from the new text in (BEG END) any and all text properties which
   ;; might interfere with CC Mode's proper working.
   ;;
@@ -1047,7 +1047,7 @@ Note that the style variables are always made local to the buffer."
       (c-clear-char-properties beg end 'c-type)
       (c-clear-char-properties beg end 'c-awk-NL-prop))))
 
-(defun c-extend-font-lock-region-for-macros (begg endd old-len)
+(defun c-extend-font-lock-region-for-macros (_begg endd _old-len)
   ;; Extend the region (c-new-BEG c-new-END) to cover all (possibly changed)
   ;; preprocessor macros; The return value has no significance.
   ;;
@@ -1094,7 +1094,7 @@ Note that the style variables are always made local to the buffer."
 	      t)
 	     (t nil)))))))
 
-(defun c-neutralize-syntax-in-CPP (begg endd old-len)
+(defun c-neutralize-syntax-in-CPP (_begg _endd _old-len)
   ;; "Neutralize" every preprocessor line wholly or partially in the changed
   ;; region.  "Restore" lines which were CPP lines before the change and are
   ;; no longer so.
@@ -1464,7 +1464,7 @@ Note that the style variables are always made local to the buffer."
 	   ((and
 	     (c-is-escaped end)
 	     (or (eq beg end) ; .... by inserting stuff between \ and \n?
-	      	 (c-will-be-unescaped beg end))) ;  ... by removing an odd number of \s?
+	      	 (c-will-be-unescaped beg))) ;  ... by removing an odd number of \s?
 	    (goto-char (1+ end))) ; To after the NL which is being unescaped.
 	   (t
 	    (goto-char end)))
@@ -1776,7 +1776,7 @@ Note that this is a strict tail, so won't match, e.g. \"0x....\".")
 		 (goto-char (match-beginning 0))
 		 (save-excursion (search-forward "'" (match-end 0) t)))))))))
 
-(defun c-parse-quotes-before-change (beg end)
+(defun c-parse-quotes-before-change (_beg _end)
   ;; This function analyzes 's near the region (c-new-BEG c-new-END), amending
   ;; those two variables as needed to include 's into that region when they
   ;; might be syntactically relevant to the change in progress.
@@ -1876,7 +1876,7 @@ Note that this is a strict tail, so won't match, e.g. \"0x....\".")
 	 'c-digit-separator t
 	 ?')))))
 
-(defun c-parse-quotes-after-change (beg end old-len)
+(defun c-parse-quotes-after-change (_beg _end _old-len)
   ;; This function applies syntax-table properties (value '(1)) and
   ;; c-digit-separator properties as needed to 's within the range (c-new-BEG
   ;; c-new-END).  This operation is performed even within strings and
@@ -2283,7 +2283,7 @@ Note that this is a strict tail, so won't match, e.g. \"0x....\".")
 		      (c-backward-syntactic-ws)
 		      (point)))))))))
 
-(defun c-change-expand-fl-region (beg end old-len)
+(defun c-change-expand-fl-region (_beg _end _old-len)
   ;; Expand the region (c-new-BEG c-new-END) to an after-change font-lock
   ;; region.  This will usually be the smallest sequence of whole lines
   ;; containing `c-new-BEG' and `c-new-END', but if `c-new-BEG' is in a
@@ -2427,7 +2427,7 @@ This function is called from `c-common-init', once per mode initialization."
   (add-hook 'font-lock-mode-hook 'c-after-font-lock-init nil t))
 
 ;; Emacs 22 and later.
-(defun c-extend-after-change-region (beg end old-len)
+(defun c-extend-after-change-region (beg end _old-len)
   "Extend the region to be fontified, if necessary."
   ;; Note: the parameter OLD-LEN is ignored here.
   ;;

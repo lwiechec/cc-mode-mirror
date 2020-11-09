@@ -400,9 +400,8 @@ to it is returned.  This function does not modify the point or the mark."
 	 (setq count (+ count (skip-chars-backward "\\\\"))))
        (not (zerop (logand count 1))))))
 
-(defmacro c-will-be-unescaped (beg end)
-  ;; Would the character after END be unescaped after the removal of (BEG END)?
-  ;; This is regardless of its current status.  It is assumed that (>= POS END).
+(defmacro c-will-be-unescaped (beg)
+  ;; Would the character after BEG be unescaped?
   `(save-excursion
     (let (count)
       (goto-char ,beg)
@@ -2184,14 +2183,14 @@ non-nil, a caret is prepended to invert the set."
 	  (save-excursion		; Needed for XEmacs's byte compiler
 	    (set-buffer buf1)
 	    (add-hook 'after-change-functions
-		      (lambda (beg end old-len) (setq changed t))
+		      (lambda (_beg _end _old-len) (setq changed t))
 		      nil
 		      t)
 	    (set-buffer buf2)
 	    (insert ?c)
 	    (set-buffer buf1)
 	    (remove-hook 'after-change-functions
-			 (lambda (beg end old-len) (setq changed t))
+			 (lambda (_beg _end _old-len) (setq changed t))
 			 t)
 	    (kill-buffer buf1)
 	    (kill-buffer buf2)
@@ -2706,7 +2705,7 @@ quoted."
 	(set sym (cons (cons mode value) (symbol-value sym)))
 	value))))
 
-(defun c-find-assignment-for-mode (source-pos mode match-any-lang name)
+(defun c-find-assignment-for-mode (source-pos mode match-any-lang _name)
   ;; Find the first assignment entry that applies to MODE at or after
   ;; SOURCE-POS.  If MATCH-ANY-LANG is non-nil, entries with `t' as
   ;; the language list are considered to match, otherwise they don't.

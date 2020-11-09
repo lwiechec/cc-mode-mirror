@@ -1104,7 +1104,7 @@ casts and declarations are fontified.  Used on level 2 and higher."
      limit list not-top
      (cond ((eq types t) 'c-decl-type-start)
 	   ((null types) 'c-decl-id-start))
-     (lambda (id-start id-end end-pos not-top is-function init-char)
+     (lambda (id-start _id-end end-pos _not-top is-function init-char)
        (if (eq types t)
 	   ;; Register and fontify the identifier as a type.
 	   (let ((c-promote-possible-types t))
@@ -2530,7 +2530,7 @@ need for `c++-font-lock-extra-types'.")
      limit
      "[-+]"
      nil
-     (lambda (match-pos inside-macro &optional top-level)
+     (lambda (_match-pos _inside-macro &optional _top-level)
        (forward-char)
        (c-font-lock-objc-method))))
   nil)

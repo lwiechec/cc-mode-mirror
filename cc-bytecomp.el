@@ -280,7 +280,7 @@ perhaps a `cc-bytecomp-restore-environment' is forgotten somewhere"))
 	(cc-bytecomp-debug-msg
 	 "cc-bytecomp-restore-environment: Done"))))
 
-(defun cc-bytecomp-load (cc-part)
+(defun cc-bytecomp-load (_cc-part)
   ;; A dummy function which will immediately be overwritten by the
   ;; following at load time.  This should suppress the byte compiler
   ;; error that the function is "not known to be defined".

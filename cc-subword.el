@@ -177,10 +177,10 @@ Optional argument ARG is the same as for `forward-word'."
   (c-keep-region-active)
   (cond
    ((< 0 arg)
-    (dotimes (i arg (point))
+    (dotimes (_i arg (point))
       (c-forward-subword-internal)))
    ((> 0 arg)
-    (dotimes (i (- arg) (point))
+    (dotimes (_i (- arg) (point))
       (c-backward-subword-internal)))
    (t
     (point))))
@@ -262,7 +262,7 @@ Optional argument ARG is the same as for `capitalize-word'."
   (let ((count (abs arg))
 	(start (point))
 	(advance (if (< arg 0) nil t)))
-    (dotimes (i count)
+    (dotimes (_i count)
       (if advance
 	  (progn (re-search-forward
 		  (concat "[" c-alpha "]")
