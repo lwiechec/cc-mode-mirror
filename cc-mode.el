@@ -268,7 +268,8 @@ control).  See \"cc-mode.el\" for more info."
 	(defs c-std-abbrev-keywords)
 	)
     (unless (and (boundp table)
-		 (abbrev-table-p (symbol-value table)))
+		 (or (not (fboundp 'abbrev-table-p))
+		     (abbrev-table-p (symbol-value table))))
       (define-abbrev-table table nil))
     (setq local-abbrev-table (symbol-value table))
     (while defs

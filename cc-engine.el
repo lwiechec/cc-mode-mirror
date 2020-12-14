@@ -2773,7 +2773,8 @@ comment at the start of cc-engine.el for more info."
 	      ((and (nth 4 state)		 ; A comment
 		    (not (eq (nth 7 state) 'syntax-table))) ; but not a psuedo comment.
 	       (list (point)
-		     (if (eq (nth 7 state) 1) 'c++ 'c)
+		     (if (memq (nth 7 state) '(t 1)) ; It will still be t on XEmacs.
+			 'c++ 'c)
 		     (nth 8 state)))
 	      (t			; Neither string nor comment.
 	       (point)))))
@@ -2795,11 +2796,12 @@ comment at the start of cc-engine.el for more info."
       (if (and (eq (char-before) ?*)
 	       (> (- (point) (nth 8 state)) 2)) ; not "/*/".
 	  (list (point)
-		(if (eq (nth 7 state) 1) 'c++ 'c)
+		(if (memq (nth 7 state) '(t 1)) ; t in XEmacs, 1 in (modern) Emacs.
+		    'c++ 'c)
 		(nth 8 state)
 		?*)
 	(list (point)
-		(if (eq (nth 7 state) 1) 'c++ 'c)
+		(if (memq (nth 7 state) '(t 1)) 'c++ 'c)
 		(nth 8 state))))
      (t (if (memq (char-before) '(?/ ?\\))
 	    (list (point) (char-before))

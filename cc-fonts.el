@@ -751,10 +751,10 @@ stuff.  Used on level 1 and higher."
 	(cond
 	 ((or (nth 3 s)			; In a string
 	      (and (nth 4 s)		; In a comment
-		   (eq (nth 7 s)	; Comment style
-		       (if c-block-comment-flag
-			   nil		; Block comment
-			 1))))	; Line comment
+		   (if c-block-comment-flag
+		       (null (nth 7 s))
+		     (memq (nth 7 s) '(t 1))) ; t in XEmacs, 1 in (modern) Emacs
+		   ))	; Line comment
 	    ;; Move over a "valid" literal.
 	  (setq s (parse-partial-sexp (point) limit nil nil s 'syntax-table)))
 	 ((nth 4 s)			; In an invalid comment
