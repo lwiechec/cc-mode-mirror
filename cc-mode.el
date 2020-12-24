@@ -627,6 +627,8 @@ that requires a literal mode spec at compile time."
   (make-local-variable 'fill-paragraph-function)
   (setq fill-paragraph-function 'c-fill-paragraph)
 
+  ;; Initialize the cache for `c-looking-at-or-maybe-in-bracelist'.
+  (setq c-laomib-cache nil)
   ;; Initialize the three literal sub-caches.
   (c-truncate-lit-pos-cache 1)
   ;; Initialize the cache of brace pairs, and opening braces/brackets/parens.
@@ -2034,7 +2036,9 @@ Note that this is a strict tail, so won't match, e.g. \"0x....\".")
 		(if c-get-state-before-change-functions
 		    (mapc (lambda (fn)
 			    (funcall fn beg end))
-			  c-get-state-before-change-functions))))
+			  c-get-state-before-change-functions))
+
+		(c-laomib-invalidate-cache beg end)))
 	  (c-clear-string-fences))))
     (c-truncate-lit-pos-cache beg)
     ;; The following must be done here rather than in `c-after-change'
@@ -2183,7 +2187,8 @@ Note that this is a strict tail, so won't match, e.g. \"0x....\".")
 	old-pos
 	(new-pos pos)
 	capture-opener
-	bod-lim bo-decl)
+	bod-lim bo-decl
+	paren-state containing-brace)
     (goto-char (c-point 'bol new-pos))
     (unless lit-start
       (setq bod-lim (c-determine-limit 500))
@@ -2202,12 +2207,16 @@ Note that this is a strict tail, so won't match, e.g. \"0x....\".")
 	   (setq old-pos (point))
 	   (let (pseudo)
 	     (while
-		 (progn
-		   (c-syntactic-skip-backward "^;{}" bod-lim t)
-		   (and (eq (char-before) ?})
-			(save-excursion
-			  (backward-char)
-			  (setq pseudo (c-cheap-inside-bracelist-p (c-parse-state))))))
+		 (and
+		  ;; N.B. `c-syntactic-skip-backward' doesn't check (> (point)
+		  ;; lim) and can loop if that's not the case.
+		  (> (point) bod-lim)
+		  (progn
+		    (c-syntactic-skip-backward "^;{}" bod-lim t)
+		    (and (eq (char-before) ?})
+			 (save-excursion
+			   (backward-char)
+			   (setq pseudo (c-cheap-inside-bracelist-p (c-parse-state)))))))
 	       (goto-char pseudo))
 	     t)
 	   (> (point) bod-lim)
@@ -2240,7 +2249,14 @@ Note that this is a strict tail, so won't match, e.g. \"0x....\".")
 		      (and (eq (char-before) ?{)
 			   (save-excursion
 			     (backward-char)
-			     (consp (c-looking-at-or-maybe-in-bracelist))))
+			     (setq paren-state (c-parse-state))
+			     (while
+				 (and
+				  (setq containing-brace
+					(c-pull-open-brace paren-state))
+				  (not (eq (char-after containing-brace) ?{))))
+			     (consp (c-looking-at-or-maybe-in-bracelist
+				     containing-brace containing-brace))))
 		      )))
 	   (not (bobp)))
 	(backward-char))		; back over (, [, <.
