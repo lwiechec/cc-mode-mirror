@@ -292,15 +292,12 @@ to be set as a file local variable.")
 	    ;; for batch mode, so we let it lie.
 	    (fset 'noninteractive (lambda () nil)))
 	  (font-lock-mode 1)
-	  (unless (or (get-text-property (point-min) 'face)
-		      (next-single-property-change (point-min) 'face))
-	    ;; Some emacsen have already fontified the buffer above,
-	    ;; but others need some more coercion..
-	    (let (;; Avoid getting some lazy fontification package that
-		  ;; might decide that nothing should be done.
-		  (font-lock-fontify-buffer-function
-		   'font-lock-default-fontify-buffer))
-	      (font-lock-fontify-buffer))))
+	  ;; Some emacsen may already have fontified the buffer.  Others have
+	  ;; lazy fontification packages of one sort or another, so to be
+	  ;; entirely sure ....
+	  (let ((font-lock-fontify-region-function
+		 'font-lock-default-fontify-region))
+	    (font-lock-fontify-region (point-min) (point-max))))
       (when orig-noninteractive-function
 	(fset 'noninteractive orig-noninteractive-function)))))
 
