@@ -1,3 +1,8 @@
+# Attributes
+@load "ext"
+@include "lib"
+@namespace "awk"
+@random "foo"
 # Test (most of) awk-font-lock-keywords.
 # Function names
 func foo(bar) {}
@@ -8,9 +13,10 @@ function
 func
 # Built-in variables
 {print ARGC ARGIND ARGV BINMODE CONVFMT ENVIRON ERRNO \
-        FIELDWIDTHS FILENAME FNR FS IGNORECASE LINT NF  \
-        NR OFMT OFS ORS PROCINFO RLENGTH RS RSTART RT   \
-        SUBSEP TEXTDOMAIN argc ARGCC ARGC_ ARGC+1}
+        FIELDWIDTHS FILENAME FNR FPAT FS FUNCTAB IGNORECASE \
+        LINT NF NR OFMT OFS ORS PREC PROCINFO RLENGTH ROUNDMODE \
+        RS RSTART RT SUBSEP SYNTAB TEXTDOMAIN \
+        argc ARGCC ARGC_ ARGC+1}
 # Special file names (1)
 {print "foo" > "/dev/stderr"}
 {print "foo" > "/dev/stderr "}
@@ -92,6 +98,8 @@ END {
     do foo()
     while (bar)
 }
+BEGINFILE {print foo}
+ENDFILE {print bar}
 # Builtins
 {
     adump (a)

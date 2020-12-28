@@ -92,7 +92,10 @@ function foo()
     x = \
 	a ? b ? c : d : e
     x =						\
-	a :: b
+        a::b                                    \
+	+ a :: b                                \
+        + a::b::c                               \
+        + a ::b  +  a:: b
     stop
     if (a)
 	b

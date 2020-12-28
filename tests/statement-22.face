@@ -93,6 +93,9 @@
 
 
 
+(12 err) (14 reg)
+(11 err) (13 reg) (14 err) (16 reg)
+(12 err) (14 reg) (21 err) (23 reg)
 
 (4 key) (6 reg)
 

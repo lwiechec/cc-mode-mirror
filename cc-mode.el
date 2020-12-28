@@ -101,6 +101,7 @@
 (cc-bytecomp-defvar normal-erase-is-backspace)
 (cc-bytecomp-defvar file-local-variables-alist)
 (cc-bytecomp-defvar dir-local-variables-alist)
+(cc-bytecomp-defvar awk-mode-syntax-table)
 
 ;; We set this variable during mode init, yet we don't require
 ;; font-lock.
