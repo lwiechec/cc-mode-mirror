@@ -576,11 +576,17 @@ to be set as a file local variable.")
 			   (forward-char)))
 		     (when (and (equal facenames '(str))
 				(looking-at c-string-limit-regexp))
-		       (when (looking-at cc-test-empty-string-regexp)
+		       (when
+			   (and
+			    (looking-at cc-test-empty-string-regexp)
+			    (not (eq (char-after) ?\')))
 			 ;; Ignore empty strings altogether.
 			 (while (progn
 				  (goto-char (match-end 0))
-				  (looking-at cc-test-empty-string-regexp)))
+				  (and
+				   (looking-at cc-test-empty-string-regexp)
+				   (not (eq (char-after) ?\')))))
+			 (goto-char (match-beginning 0))
 			 (throw 'record-face nil))
 		       (forward-char)))
 		   (setq in-string (equal facenames '(str))))

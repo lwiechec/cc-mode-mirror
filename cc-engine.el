@@ -1876,7 +1876,7 @@ comment at the start of cc-engine.el for more info."
      (put-text-property beg end 'c-is-sws t)
      ,@(when (facep 'c-debug-is-sws-face)
 	 `((c-debug-add-face beg end 'c-debug-is-sws-face)))))
-(def-edebug-spec c-put-is-sws t)
+(eval-after-load "edebug" '(def-edebug-spec c-put-is-sws t))
 
 (defmacro c-put-in-sws (beg end)
   ;; This macro does a hidden buffer change.
@@ -1884,7 +1884,7 @@ comment at the start of cc-engine.el for more info."
      (put-text-property beg end 'c-in-sws t)
      ,@(when (facep 'c-debug-is-sws-face)
 	 `((c-debug-add-face beg end 'c-debug-in-sws-face)))))
-(def-edebug-spec c-put-in-sws t)
+(eval-after-load "edebug" '(def-edebug-spec c-put-in-sws t))
 
 (defmacro c-remove-is-sws (beg end)
   ;; This macro does a hidden buffer change.
@@ -1892,7 +1892,7 @@ comment at the start of cc-engine.el for more info."
      (remove-text-properties beg end '(c-is-sws nil))
      ,@(when (facep 'c-debug-is-sws-face)
 	 `((c-debug-remove-face beg end 'c-debug-is-sws-face)))))
-(def-edebug-spec c-remove-is-sws t)
+(eval-after-load "edebug" '(def-edebug-spec c-remove-is-sws t))
 
 (defmacro c-remove-in-sws (beg end)
   ;; This macro does a hidden buffer change.
@@ -1900,7 +1900,7 @@ comment at the start of cc-engine.el for more info."
      (remove-text-properties beg end '(c-in-sws nil))
      ,@(when (facep 'c-debug-is-sws-face)
 	 `((c-debug-remove-face beg end 'c-debug-in-sws-face)))))
-(def-edebug-spec c-remove-in-sws t)
+(eval-after-load "edebug" '(def-edebug-spec c-remove-in-sws t))
 
 (defmacro c-remove-is-and-in-sws (beg end)
   ;; This macro does a hidden buffer change.
@@ -1909,7 +1909,7 @@ comment at the start of cc-engine.el for more info."
      ,@(when (facep 'c-debug-is-sws-face)
 	 `((c-debug-remove-face beg end 'c-debug-is-sws-face)
 	   (c-debug-remove-face beg end 'c-debug-in-sws-face)))))
-(def-edebug-spec c-remove-is-and-in-sws t)
+(eval-after-load "edebug" '(def-edebug-spec c-remove-is-and-in-sws t))
 
 ;; The type of literal position `end' is in in a `before-change-functions'
 ;; function - one of `c', `c++', `pound', `noise', `attribute' or nil (but NOT
