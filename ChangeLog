@@ -1,5 +1,51 @@
 2020-12-31  Alan Mackenzie  <bug-cc-mode@gnu.org>
 
+	Release 5.35.
+
+2020-12-31  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	Add changes-535.php, which had been forgotten earlier.
+
+2020-12-31  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	Prepare the repository for release 5.35.
+
+	* ANNOUNCEMENT: Update to release 5.35.
+
+	* ChangeLog: Prefix the entries for changes since 5.34.
+
+	* MANIFEST: Update the version number to 5.35.
+
+	* NEWS: Prefix user visible changes to 5.35 to the file.
+
+	* README: Update the note of tested Emacsen for CC Mode 5.35.  Give new
+	instructions for XEmacs users.
+
+	* admin/changelinks.h: Add a link for changes-535.php.
+
+	* admin/compat.php: Update to 5.35, and mention the (X)Emacs releases it was
+	tested on.  Give new instructions for XEmacs users.
+
+	* admin/hgaccess.php: Update the branch number.
+
+	* admin/index.php: Update the version number to 5.35.
+
+	* admin/links.h: Replace a link to changes-534.php with one to
+	change-535.php.
+
+	* admin/release.php: Update to 5.35.
+
+	* cc-align.el, cc-awk.el, cc-bytecomp.el, cc-cmds.el, cc-defs.el,
+	* cc-engine.el, cc-fonts.el, cc-guess.el, cc-langs.el, cc-menus.el, cc-mode.el,
+	* cc-mode.texi, cc-styles.el, cc-subword.el, cc-vars.el: Update the copyright
+	notices.
+
+	* cc-defs.el: Update c-version to "5.35".
+
+	* cc-mode.texi: Update for release 5.35, update the copyright notice.
+
+2020-12-31  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
 	CC Mode.  Fix AWK Mode fontification bug, remove some unused variables
 
 	* cc-awk.el (awk-font-lock-keywords): Replace a hard use of
