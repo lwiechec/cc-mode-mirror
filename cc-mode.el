@@ -2,7 +2,8 @@
 
 ;; Copyright (C) 1985, 1987, 1992, 1993, 1994, 1995, 1996, 1997, 1998,
 ;;   1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009,
-;;   2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019
+;;   2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020,
+;;   2021
 ;;   Free Software Foundation, Inc.
 
 ;; Authors:    2003- Alan Mackenzie
@@ -1306,6 +1307,7 @@ Note that the style variables are always made local to the buffer."
 					   'c-fl-syn-tab))
 	(when (< pos c-max-syn-tab-mkr)
 	  (goto-char pos))
+;;;; 2020-07-06: Point might not be set here for the next operation.  FIXME!!!
 	(when (and (save-match-data
 		     (c-search-backward-char-property-with-value-on-char
 		      'c-fl-syn-tab '(15) ?\"

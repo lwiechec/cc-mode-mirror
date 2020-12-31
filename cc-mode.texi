@@ -166,7 +166,7 @@ CC Mode
 @copying
 Copyright @copyright{} 1995, 1996, 1997, 1998, 1999, 2000, 2001, 2002,
 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013,
-2014, 2015, 2016, 2017, 2018, 2019  Free Software Foundation, Inc.
+2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021  Free Software Foundation, Inc.
 
 This manual is free documentation; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -198,7 +198,7 @@ file @file{COPYING}, along with @ccmode{}.  If not, see
 @titlepage
 @sp 10
 
-@center @titlefont{CC Mode 5.34}
+@center @titlefont{CC Mode 5.35}
 @sp 2
 @center A GNU Emacs mode for editing C and C-like languages
 @sp 2
@@ -385,7 +385,7 @@ was added in version 5.30.
 
 This manual describes @ccmode{}
 @comment The following line must appear on its own, so that the
-version 5.34.
+version 5.35.
 @comment Release.py script can update the version number automatically
 
 @ccmode{} supports the editing of K&R and ANSI C, C++, Objective-C,

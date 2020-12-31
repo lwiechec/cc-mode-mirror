@@ -1,5 +1,39 @@
 CC Mode NEWS -- user visible changes.  -*- outline -*-
 
+* Changes in 5.35
+
+** The minimum version of Emacs supported is still 24.5.  XEmacs users should
+obtain a reasonably new repository version of XEmacs from
+https://foss.heptapod.net/xemacs/xemacs and of required packages from
+https://foss.heptapod.net/xemacs/xemacs-packages via mercurial and build them
+to work with eachother.  This ensures important bug fixes are present.
+
+** Optimizations have been added for large buffers with few braces (e.g.
+.h files with only #defines) and for those with very large brace blocks.
+
+** Several facilities from GAWK 4 (including the switch statement) have been
+implemented in AWK Mode.
+
+** Support for Doxygen documentation style has been added.
+
+** Specified preprocessor directives (e.g. #pragma) can now be indented as
+though they were statements.
+
+** The ability to recognize Objective-C Mode method names has been added.
+E.g. for Imenu.
+
+** "Wrong" style comments can now be fontified with font-lock-warning-face.
+These are block comments when the default style is line comments and
+vice-versa.
+
+** C++ Mode attributes have been implemented.
+
+** Bogously "adjacent" double quotes can now pair up syntactically.
+So, e.g. C-M-f will move from one unterminated double quote mark to another
+one, even though there is an unescaped newline between them.
+
+** Many bugs have been fixed.
+
 * Changes in 5.34
 
 This version contains a few mainly minor new features, significant internal

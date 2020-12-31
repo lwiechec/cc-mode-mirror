@@ -15,15 +15,15 @@ CC Mode what it is today, notably Barry Warsaw who took over BOCM
 Martin Stjernholm, CC Mode's maintainer from 2000 to 2005.
 
 <p>The current release available for <a
-href="release.php">download</a> is 5.34.  There is a detailed list
-of <a href="changes-534.php">user visible changes</a>, as well as <a
+href="release.php">download</a> is 5.35.  There is a detailed list
+of <a href="changes-535.php">user visible changes</a>, as well as <a
 href="installation.php">installation instructions</a> and Emacs/XEmacs
 <a href="compat.php">compatibility details</a>.
 
 <p>When a patch release is made, the last number in its version spec
-(e.g. 5.34.1) is the patch release number.  Patch releases are made fairly
-frequently and contain only bug fixes since the last "real" release.  The <a
-href="src/ChangeLog">ChangeLog file</a> lists the bugs fixed.
+(e.g. 5.35.2) is the patch release number.  Any patch releases made contain
+only bug fixes since the last "real" release.
+The <a href="src/ChangeLog">ChangeLog file</a> lists the bugs fixed.
 
 <p>You can <a href="html-manual/index.html">browse the documentation
 on-line</a>.  It's also available for <a href="manual/">download</a>

@@ -1,4 +1,4 @@
-README for CC Mode 5.34
+README for CC Mode 5.35
 Current maintainer : Alan Mackenzie
 Contact address    : bug-cc-mode@gnu.org
 
@@ -13,13 +13,19 @@ INTRODUCTION
 
         <http://cc-mode.sourceforge.net/html-manual/index.html>
 
-    As of this writing (June 2019), CC Mode currently works out of
-    the box with XEmacs versions 21.5 (latest release) and later, and
-    with Emacs versions 24.5 and later.  (It might well still work
-    with some earlier versions and will very likely work with later
-    versions too, when they become available.)  Note that due to the
-    cessation of active develpment of XEmacs, CC Mode 5.34 might well
-    be the last version to support XEmacs at all.
+    As of this writing (January 2021), CC Mode currently works out of
+    the box with Emacs versions 24.5 and later.  (It might well still
+    work with some earlier versions and will very likely work with
+    later versions too, when they become available.)
+
+    Please note that despite the cessation of active develpment of
+    XEmacs, CC Mode continues to support it.  To use CC Mode with
+    XEmacs, be sure you have a repository version of XEmacs at or
+    later than 7190:2bbae1af16ac from Wed Nov 25 19:09:07 2020 +0000,
+    obtainable from https://foss.heptapod.net/xemacs/xemacs via
+    mercurial.  You will also need at least some XEmacs packages,
+    obtainable from https://foss.heptapod.net/xemacs/xemacs-packages.
+    Build XEmacs and its packages to work together with eachother.
 
 MORE INFORMATION
 
@@ -103,8 +109,9 @@ INSTALLATION
 
   Compatibility Issues
 
-    CC Mode should work fine with most versions of Emacs and XEmacs
-    which aren't ancient (see the introduction above).
+    CC Mode should work fine with most versions of Emacs which aren't
+    ancient and with up to date repository versions of XEmacs (see the
+    introduction above).
 
     For more details about interactions with different packages, see
     the CC Mode web page.

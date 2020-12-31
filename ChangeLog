@@ -1,3 +1,1065 @@
+2020-12-31  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	CC Mode.  Fix AWK Mode fontification bug, remove some unused variables
+
+	* cc-awk.el (awk-font-lock-keywords): Replace a hard use of
+	c-preprocessor-face-name by an `eval' expression which evaluates it.
+
+	* cc-engine.el (c-in-knr-argdecl, c-laomib-put-cache, c-laomib-fix-elt):
+	Remove unused bound variables.
+
+2020-12-30  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	CC Mode: correct the handling of empty strings, also in test program
+
+	In particular, have the macro cache invalidated after its last use in
+	c-before-change.
+
+	* cc-engine.el (top level): Enclose five def-edebug-spec's in
+	eval-after-load's.
+
+	* cc-langs.el (c-get-state-before-change-functions): Remove
+	c-invalidate-macro-cache from the entries it's in, moving it to....
+
+	* cc-mode.el (c-before-change): Call c-invalidate-macro-cache directly from
+	the functions, after the call to c-invalidate-state-cache.
+
+	* 000tests.el (cc-test-record-faces): Add handling for "empty single quoted
+	strings" i.e. an invalid character quote expression.
+
+	* bracelist-11.face: Amend for the recognition of the invalid empty single
+	quoted constructs.
+
+2020-12-28  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	CC Mode: Add newish AWK Mode facilities, as used in gawk-4.
+
+	* cc-awk.el (c-awk-font-lock-invalid-namespace-separators): New function.
+	(c-awk-context-expand-fl-region): New function.
+	(awk-font-lock-keywords): Enhance handling of function declarations to include
+	:: tokens.  Fontify new system variable names FPAT, FUNCTAB, PREC, ROUNDMODE,
+	SYNTAB.  Fontify new keywords BEGINFILE and ENDFILE.  Fontify new system
+	functions asorti, dcngettext, isarray, patsplit, typeof.  Fontify the new
+	directives @include, @load, @namespace.  Call
+	c-awk-font-lock-invalid-namespace-separators as a matcher.
+
+	* cc-fonts.el (top level): No longer require 'cc-awk.
+
+	* cc-langs.el (c-before-context-fontification-functions): Give AWK the value
+	c-awk-context-expand-fl-region rather than nil.
+
+	* cc-mode.el (top level): Declare awk-mode-syntax-table as a variable.
+
+	* awk-face-1.{awk,face}: Add tests for the new attributes, for the new system
+	variables, and for the new keywords.
+
+	* funcs-5.{awk,face}: New test files for new function declarations.
+
+	* statement-22.{awk,face,res}: Add erroneous use of the :: token into
+	  statements.  The .res file has been converted to "new" style.
+
+2020-12-28  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	* 000tests.el (cc-test-force-font-lock-buffer): Replace
+
+	font-lock-fontify-buffer, which didn't fontify the entire buffer when jit-lock
+	was enabled, with (font-lock-fontify-region (point-min) (point-max)).
+
+2020-12-24  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	CC Mode: introduce a new cache for brace structures.  This fixes bug #45248
+
+	Also fix three infinite loops.  The new cache accelerates backward searches
+	for struct beginnings in c-looking-at-or-maybe-in-bracelist.
+
+	* cc-engine.el (c-beginning-of-statement-1): In the final loop over unary
+	operators, add a check (> (point) lim) to avoid certain infinite loops.
+	(c-beginning-of-decl-1): In the first loop add a similar check on point and
+	lim.
+	(c-laomib-loop): New function extracted from
+	c-looking-at-or-maybe-in-bracelist.
+	(c-laomib-cache): New buffer local variable.
+	(c-laomib-get-cache, c-laomib-put-cache, c-laomib-fix-elt)
+	(c-laomib-invalidate-cache): New functions which implement the cache.
+	(c-looking-at-or-maybe-in-bracelist): Replace two invocations of
+	c-go-up-list-backwards with calls to c-parse-state.  Extract the new function
+	c-laomib-loop.  Insert code which calls c-laomib-loop minimally, with the help
+	of the new cache.
+
+	* cc-mode.el (c-basic-common-init): Initialise the new cache (at mode start).
+	(c-before-change): Invalidate the new cache.
+	(c-fl-decl-start): Add an extra check (> (point) bod-lim) to prevent looping.
+	Determine the enclosing brace to pass as arguments to
+	c-looking-at-or-maybe-in-bracelist.
+
+2020-12-15  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	CC Mode: Optimize for scrolling large buffers containing few braces
+
+	This fixes bug #25706.  It particularly pertains to .h files which contain
+	only macro definitions.  Many of these files are to be found, for example, in
+	the driver sections of the Linux kernel.
+
+	* cc-engine.el (c-beginning-of-statement-1, c-on-identifier)
+	(c-syntactic-skip-backward, c-find-decl-prefix-search, c-find-decl-spots)
+	(c-forward-name, c-back-over-list-of-member-inits)
+	(c-back-over-member-initializers, c-looking-at-inexpr-block)
+	(c-guess-basic-syntax): Give search limits to, or amend existing ones to
+	c-backward-syntactic-ws, c-forward-syntactic-ws, c-backward-token-2,
+	c-beginning-of-statement-1.
+	(c-determine-limit-no-macro): New function.
+	(c-determine-limit-get-base): Remove unlimted invocation of
+	c-backward-syntactic-ws.
+	(c-determine-limit): Exclude movement between two different macros.  Use new
+	function c-determine-limit-no-macro.
+	(c-back-over-list-of-member-inits): New parameter `limit'.
+
+	* cc-mode.el (c-unfind-coalesced-tokens, c-before-change, c-fl-decl-end):
+	Give search limits to, or amend existing ones to c-backward-syntactic-ws,
+	c-forward-syntactic-ws, skip-chars-backward, skip-chars-forward.
+
+2020-12-14  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	Optimise c-font-lock-<>-arglists, particularly for buffers with few <..> pairs
+
+	* cc-fonts.el (c-font-lock-<>-arglists): In place of a regexp search for a
+	complicated and slow regexp, search simply for "<" ouside of literals together
+	with add hoc testing of other requirements for a <...> match.
+
+	* cc-langs.el (c-nonsymbol-key): New c-lang-defvar from the c-lang-const.
+
+2020-12-14  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	Optimise c-parse-state for large buffers with few (if any) braces.
+
+	* cc-engine (c-get-fallback-scan-pos): Search a maximum of 50,000 characters
+	back for the two BODs.  Return nil if we dont' find them.
+	(c-parse-state-get-strategy): For strategy `forward', always use the position
+	`good-pos' for `start-point', even when there's a change of current macro.
+	Deal with a possible return value of nil from c-get-fallback-scan-pos (as
+	above).
+	(c-invalidate-state-cache-1): For `c-state-cache-good-pos', instead of
+	sometimes using the minimum scan pos (leading to extensive scanning of the
+	entire buffer) use a point close to `here'.
+
+2020-12-14  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	CC Mode: fix small incompatibilities between Emacs and XEmacs
+
+	* cc-engine.el (c-parse-ps-state-to-cache)
+
+	* cc-fonts.el (c-maybe-font-lock-wrong-style-comments): When testing (nth 7
+	s), where s is a parser state, check for both values 1 (Emacs) and t
+	(XEmacs).
+
+	* cc-mode.el (c-populate-abbrev-table): Do not try to run abbrev-table-p on
+	XEmacs, since it doesn't exist there.
+
+2020-12-11  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	CC Mode: Handle several K&R parameters per declaration
+
+	* cc-engine.el (c-in-knr-argdecl): Reformulate the latter part of this
+	function using c-do-declarators.
+
+	* knr-7.{c,res}: New test files.
+
+2020-11-26  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	CC Mode: Fix error in cache handling.  This fixes bug #43481
+
+	* cc-engine.el (c-full-pp-to-literal): Handle correctly END being before HERE
+	by using parse-partial-sexp to get the end of the literal containing HERE.
+
+2020-11-15  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	* cc-langs.el (c-<>-notable-chars-re): Fix wrong '-' in regexp
+
+2020-11-09  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	CC Mode: fix many compiler warnings which would appear with lexical binding
+
+	* cc-align.el, cc-awk.el, cc-bytecomp.el, cc-cmds.el, cc-defs.el, cc-engine.el
+	* cc-fonts.el, cc-langs.el, cc-mode.el, cc-subword.el, cc-vars.el: In many
+	places, where function parameters are not used, prefix their names with _.
+
+	* cc-cmds.el (c-electric-brace, c-defun-name-and-limits)
+	* cc-engine.el (c-cache-to-parse-ps-state, c-full-trim-near-cache)
+	(c-after-change-unmark-raw-strings, c-maybe-re-mark-raw-string)
+	(c-forward-decl-or-cast-1): Remove unused local variables.
+
+	* cc-defs.el (c-will-be-unescaped): Remove unused parameter end.
+	* cc-engine.el (c-looking-at-decl-block): Remove unused parameter
+	containing-sexp.
+	(c-looking-at-special-brace-list): Remove unused parameter lim.
+	(c-add-class-syntax): Remove unused parameter paren-state.
+
+2020-10-28  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	CC Mode: Only recognize foo (*bar) as a function pointer when followed by (
+
+	* cc-engine.el (c-forward-over-decl-or-cast-1): (after CASE 2) test variables
+	got-suffix-after-parens and at-decl-end before invoking
+	c-fdoc-shift-type-backward.
+
+	* decls-54.{cc,face}: New test files.
+
+2020-10-08  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	CC Mode: Move the handling of keyword auto into type handling for C++.
+
+	This should allow auto, const, static, ... to be in any order.
+
+	* cc-engine.el (c-forward-type): New return value 'no-id for when auto
+	precludes the parsing of a type identifier.  Adapt processing for this.
+	(c-forward-decl-or-cast-1): Use the new facility from c-forward-type.
+
+	* cc-langs.el (c-type-modifier-prefix-kwds): Insert the value of
+	c-no-type-kwds into the value.
+	(c-no-type-kwds, c-no-type-key): New lang consts/vars, basically "auto".
+	(c-typeless-decl-kwds, c-modifier-kwds): Remove "auto" from the C++ value.
+
+	* decls-53.{cc,face}: New test files.
+
+2020-10-02  Stefan Monnier  <monnier@iro.umontreal.ca>
+
+	CC Mode: Convert the handling of c-special-indent-hook to standard usage.
+
+	* cc-styles.el (c-set-style): Use kill-local-variable rather than copying the
+	hook's global value to the local binding.
+	(c-make-styles-buffer-local): Remove redundant make-variable-buffer-local.
+
+2020-09-20  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	C++ Mode: Modernize the fontification of "using"
+
+	Since "using" is now used in three distinct ways in C++, write a special
+	function to handle these rather than attempting to adapt the old regular
+	expressions.
+
+	* cc-fonts.el (c-font-lock-declarators): Amend to allow the argument TYPES to
+	be a face.  This face is given to the declarator being processed.
+	(c-font-lock-single-decl): Make an argument to c-font-lock-declarators nil or
+	t, not merely nil or non-nil.
+	(c-complex-decl-matchers): Include c-font-lock-c++-using in the C++ value of
+	this variable.
+	(c-font-lock-c++-using): New function.
+
+	* cc-langs.el (c-using-kwds, c-using-key): New lang consts/vars.
+
+	* using-2.{cc,face}, using-3.{cc,face}: New test files.
+
+2020-09-12  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	C++ Mode: handle __attribute__,etc. inside constructor argument lists
+
+	This corrects both the fontification and indentation of these things, fixing
+	bug #42270.
+
+	* cc-engine.el (c-do-declarators): Skip over "hangon keys" and noise macros
+	whilst scanning a putative C++ function.
+	(c-forward-decl-or-cast-1): When checking for typeless functions, skip over
+	"hangon keys" and noise macros.
+
+	* cc-mode.el (c-fl-decl-end): Deal with certain invalid "nested declarators"
+	by scanning over them with a recursive call of c-fl-decl-end.
+
+	* cc-vars.el (c-noise-macro-names, c-noise-macro-with-parens-names): State in
+	the doc strings that if either of these is a regexp, it must have a submatch 1
+	which matches the noise macro exactly.
+
+	* constructor-3.{cc,res,face}: New test files.
+
+2020-09-11  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	CC Mode: Fix minor bugs in the string handling functions
+
+	These sometimes gave rise to the tail of a buffer being "stringed out".
+
+	* cc-defs.el (c-will-be-unescaped): New macro.
+
+	* cc-mode.el (c-before-change-check-unbalanced-strings)
+	(c-after-change-mark-abnormal-strings): Fix bugs in the handling of string
+	fence syntax-table text properties.
+
+2020-09-04  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	C++ Mode: handle comma separated brace initializers.
+
+	This includes both indentation and fontification.
+
+	* cc-engine.el (c-do-declarators): Handle brace initializers without =
+	correctly.
+	(c-looking-at-or-maybe-in-bracelist): Use c-do-declarators with a simple
+	inline function to check that after-type-id-pos points to the start of a
+	declarator.
+
+	* cc-langs.el (c-recognize-bare-brace-inits): New lang const/variable.
+
+	* bracelist-35.{cc,res,face}: New test files.
+
+2020-08-29  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	CC Mode: Fix processing for when c-multiline-string-start-char is a character
+
+	* cc-mode.el (c-pps-to-string-delim, c-multiline-string-check-final-quote):
+	Replace c-clear-char-property by c-clear-syn-tab.
+	(c-multiline-string-check-final-quote): Replace c-put-char-property by
+	c-put-syn-tab.
+
+2020-07-19  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	Remove redundant code from c-font-lock-fontify-region
+
+	* cc-mode.el (c-font-lock-fontify-region): Remove variables string-fence-beg
+	  and lim, and the code used to calculate them.
+
+2020-07-04  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	Remove long obsolete c-looking-at-bos.  Make c-at-expression-start-p obsolete
+
+	Fixes bug #12263.
+
+	* cc-engine.el (c-looking-at-bos): Remove.
+	(c-at-expression-start-p): Make obsolete, with no alternative function.
+
+2020-07-04  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	CC Mode: Fix wrong value of comment-start-skip, fixing half of bug #41952
+
+	Also add functions to enable correct use of CC Mode's filling functionality
+	from major modes which don't initialize CC Mode fully.  These modes are
+	currently js-mode and mhtml-mode.
+
+	* cc-langs.el (comment-start-skip): Replace "\\(" by "\\(?:" so that
+	(match-end 1) isn't falsely taken to be the start of the comment.
+
+	* cc-engine.el (c-foreign-truncate-lit-pos-cache)
+	(c-foreign-init-lit-pos-cache): New functions.
+
+2020-07-02  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	* cc-mode.el (c-or-c++-mode--regexp): Replace with updated regexp from Emacs
+
+2020-06-29  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	CC Mode: optimize for repeated simple operations.
+
+	Do this by recognising that unterminated strings in a buffer are typically
+	going to be few and close together.  Also optimize code for C++ attributes.
+
+	* cc-defs.el (c-previous-single-property-change): New macro.
+	(c-put-syn-tab, c-clear-syn-tab): Turned from macros into functions, and moved
+	to cc-mode.el.
+	(c-clear-syn-tab-properties): Amended to use c-min/max-syn-tab-mkr.
+	(c-with-extended-string-fences): Removed.
+
+	* cc-engine-el (c-enclosing-c++-attribute): Rewritten for speed.
+	(c-slow-enclosing-c++-attribute): Removed.
+	(c-semi-pp-to-literal): Remove a superfluous call to
+	c-with-extended-string-fences.
+
+	* cc-mode.el (c-min-syn-tab-mkr, c-max-syn-tab-mkr): two new marker variables
+	which bound the region occupied by positions with c-fl-syn-tab text
+	properties.
+	(c-basic-common-init): Initialize these two variables.
+	(c-fl-syn-tab-region): Removed.
+	(c-put-syn-tab, c-clear-syn-tab): Functions moved from cc-defs.el.
+	(c-clear-string-fences): Amended to use the new scheme.
+	(c-restore-string-fences): Now takes no arguments; amended to use the new
+	scheme.
+	(c-font-lock-fontify-region): Amended to use the new scheme.
+
+2020-06-25  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	CC Mode.  Fix an off by one error.  Fixes bug #41809.
+
+	* cc-engine.el (c-full-pp-to-literal): Change > to >= (twice).
+
+2020-06-23  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	Make switch work in AWK Mode.
+
+	* cc-langs.el (c-block-stmt-2-kwds): Insert "switch" into the AWK Mode entry.
+	(c-case-kwds): Remove the special entry for AWK Mode.
+
+2020-06-11  Michal Nazarewicz  <mina86@mina86.com>
+
+	CC Mode: add support for Doxygen documentation style
+
+	* cc-fonts.el (doxygen-font-lock-doc-comments, doxygen-font-lock-keywords):
+	New constants defining Doxygen comment style support.
+
+	* cc-vars.el (c-doc-comment-style): Updated docstring to mention now supported
+	Doxygen mode.
+
+	* cc-mode.texi (Documentation Comments): mention Doxygen markup.
+
+2020-06-01  Michal Nazarewicz  <mina86@mina86.com>
+
+	CC Mode: add `c-lineup-ternary-bodies'  (bug#41061)
+
+	Introduce `c-lineup-ternary-bodies' function which, when used as a c lineup
+	function, aligns question mark and colon of a ternary operator.  For example:
+
+	    return arg % 2 == 0 ? arg / 2
+	                        : (3 * arg + 1);
+
+	* cc-align.el (c-lineup-ternary-bodies): New function.
+	* cc-mode.texi (Operator Line-Up Functions): Document the new function.
+
+2020-05-26  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	Introduce some Objective-C 2.0 keywords.  This fixes bug #5953
+
+	* cc-langs.el (c-other-decl-kwds): New keywords @property, @dynamic,
+	@synthesize, @compatibility_alias.
+	(c-protection-kwds): New keywords @package, @required, @optional.
+	(c-block-stmt-1-kwds): New keywords @finally, @try, @autoreleasepool.
+	(c-constant-kwds): New keywords IBAction, IBOutlet.
+
+2020-05-24  Carl Lei  <me@xecycle.info>
+
+	Add three C++20 coroutine keywords, co_await, co_yield, and co_return
+
+	* cc-langs.el (c-operators): Add co_await and co_yield to the C++ value of
+	"Exception" keywords.
+	(c-return-kwds): Create a C++ value containing co_return.
+	(c-simple-stmt-kwds): Add co_return to the C++ value.
+
+	Copyright-paperwork-exempt: yes.
+
+2020-05-20  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	CC Mode: Fix bug #39972, by fixing c-display-defun-name for nested defuns
+
+	* cc-mode (c-common-init): Build add-log-current-defun-function out of
+	c-defun-name-and-limits instead of the former c-defun-name.
+
+2020-05-18  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	CC Mode: Allow "static" etc. to be placed after a declaration's type name
+
+	Fixes bug #41284.
+
+	* cc-langs.el (c-type-decl-prefix-key): include additionally c-modifier-kwds
+	in the set of keywords at the base of this lang-const.
+
+	* decls-52.{c,face}.  A new pair of test files.
+
+2020-05-15  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	CC Mode: Fix bug #40052, where a very large macro was too slow in scrolling
+
+	* cc-engine.el (c-end-of-macro): Fix faulty cache handling, where the upper
+	bound of c-macro-cache was never being set.
+	(c-forward-comment-minus-1): New macro which terminates unwanted indefinite
+	backward searching with lots of escaped newlines in c-backward-single-comment.
+	(c-backward-single-comment, c-backward-comments): Use the new macro above.
+
+	* cc-mode.el (c-before-change-check-unbalanced-strings)
+	(c-after-change-mark-abnormal-strings, c-after-change-escape-NL-in-string):
+	Optimize three regexps by using shy groups, thus preventing regexp stack
+	overflow while handling the large C Macro.
+
+2020-04-03  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	C++ Mode: recognize brace blocks without the hitherto required = sign
+
+	* cc-engine.el (c-looking-at-or-maybe-in-bracelist): Add code to recognize a
+	literal brace expression following an array declaration for C++.
+	(c-looking-at-inexpr-block): Replace c-symbol-chars with c-symbol-char-key,
+	fixing a coding error.
+
+	* braceblock-34.{cc,res}: New test files.
+
+2020-03-08  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	CC Mode: allow specified directives (e.g. pragma) to be indented as statements
+
+	* cc-cmds.el (c-align-cpp-indent-to-body, c-cpp-indent-to-body-flag,
+	c-electric-pragma, c-add-indent-to-body-to-abbrev-table,
+	c-clear-stale-indent-to-body-abbrevs, c-toggle-cpp-indent-to-body): New
+	functions and variables.
+
+	* cc-langs.el (c-std-abbrev-keywords): New lang const/var.
+
+	* cc-mode.el (c-populate-abbrev-table): New function
+	(c-basic-common-init): call the c-populate-abbrev-table.
+	(c-mode, c++-mode, objc-mode, java-mode, idl-mode, pike-mode, awk-mode):
+	Remove the setting of MODE-abbrev-table.
+
+	* cc-vars.el (c-cpp-indent-to-body-directives): New defcustom.
+
+	* cc-mode.texi (Custom Macros): Introduce and refer to ....
+	(Indenting Directives): New page documenting the new mechanism.
+
+2020-03-04  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	CC Mode: Fix the handling of two adjacent after-change-functionses.
+
+	The bug involved failing to set c-new-END correctly, which lead to an
+	args-out-of-range error when after-change-functions was invoked twice without
+	an intervening invocation of before-change-functions.
+
+	* cc-mode.el (c-after-change): Correct a coding error in the handling of
+	c-just-done-before-change.
+
+2020-02-23  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	CC Mode: Protect against consecutive calls to before-change-functions ...
+
+	without an intervening call to after-change-functions.  This would have been a
+	workaround to bug #38691 had the causes of that bug not been removed.
+
+	* cc-mode.el (c-just-done-before-change): Add an extra value to this variable,
+	'whole-buffer, this being set by c-before-change as a signal to c-after-change
+	that although c-before-change has run, it has assumed the entire buffer as the
+	change region.
+	(c-before-change, c-after-change): Adapt to the new meaning of the above.
+
+2020-02-23  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	Java Mode: Fix fontification of variable decl inside `for'
+
+	* cc-engine.el (c-forward-declarator): In place of a test for C++ Mode, test
+	for either C++ Mode or Java Mode.
+
+	* forloop-8.{java,face}: New test files.
+
+2020-02-23  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	* cc-defs.el (c-search-backward-char-property): Fix missing \ in a regexp \n
+
+2020-02-23  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	CC Mode: Fontify foo in "const auto foo :" correctly
+
+	* cc-engine.el (c-forward-decl-or-cast-1): While attempting to find a
+	declaration's identifier, recast the latest found id. as that identifier when
+	there is no other type identifier and the result of the most recent
+	c-forward-type call is 'maybe or 'found.  In the latter case, remove the
+	id. from the found types list, too.
+
+	* decls-51.{cc,face}: New test files.
+
+2020-02-16  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	Amend c-backward-sws better to handle multiline block comments
+
+	In particular, multiline comments lacking escaped newlines.
+
+	* cc-engine.el (c-backward-sws): Whilst searching backward for a putative
+	beginning of macro, move back over block comments whose innards lack escaped
+	newlines.
+
+	* macro-33.{c,res,face}: Update to reflect this bug fix.
+
+2020-02-16  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	Reformulate c-end-of-macro, handling multiline block comments better
+
+	* cc-langs.el (c-last-open-c-comment-start-on-line-re): Comment out.
+	(c-open-c-comment-on-logical-line-re): Remove.
+
+	* cc-engine.el (c-end-of-macro): Handle multiline block comments lacking
+	escaped newlines using parse-partial-sexp rather than the former variables
+	removed from cc-langs.el.
+
+2020-02-10  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	c-end-of-macro: Handle block coment lines with unescaped NLs correctly
+
+	* cc-langs.el (c-last-open-c-comment-start-on-line-re): Make obsolete, and
+	supersede by ...
+	(c-open-c-comment-on-logical-line-re): New language variable.
+
+	* cc-engine.el (c-end-of-macro): Inside macros, handle multiline block
+	comments whose line ends are not escaped correctly.
+
+	* macro-33.{c,res,face}: New set of test files.
+
+2020-01-27  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	Finish the documentation for c-noise-macro-{,with-parens-}names.
+
+	The doc strings and pertinent CC Mode manual page failed to mention that these
+	variables could also be regular expressions.  Amend them.
+
+	* cc-vars.el (c-noise-macro-names, c-noise-macro-with-parens-names): Amend the
+	doc strings.
+
+	* cc-mode.texi (Noise Macros): Amend the descriptions of the two variables.
+
+2020-01-26  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	Objective C Mode: Make c-forward-type work with "unsigned long", etc.
+
+	This allows the correct fontification of and correct functioning of C-c C-z
+	(c-display-defun-name) in ns_get_pixel in Emacs's src/nsimage.m.
+
+	* cc-langs.el (c-primitive-type-prefix-kwds): For objc, use the same value as
+	for c and c++ rather than the default nil.
+
+2020-01-26  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	Add ability to find ObjC method names.
+
+	* cc-cmds.el (c-defun-name-1): Add Objective C method name ability.
+
+2020-01-07  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	Objective C Mode imenu: cease recognizing "functions" within comments, etc.
+
+	This fixes bug #38749.
+
+	Also cease inserting nils at the top level of the generated imenu list for
+	Objc, since this caused imenu to throw an error when called from the keyboard.
+
+	* cc-menus.el (cc-imenu-objc-function): Put a c-literal-limits test around the
+	innards of the main re-search-backward loop.  Remove the consing of top-level
+	nils into the list being generated.
+
+2019-12-07  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	CC Mode: Allow most functions on post-self-insert-hook to be called
+
+	This contrasts with the previous state where no such functions got called.
+	This fixes bug #38406.
+
+	* cc-cmds.el (c--unsafe-post-self-insert-hook-functions): new variable.
+	(c--call-post-self-insert-hook-more-safely-1): New function.
+	(c--call-post-self-insert-hook-more-safely): New macro.
+	(c-electric-pound, c-electric-brace, c-electric-slash, c-electric-star)
+	(c-electric-semi&comma, c-electric-colon, c-electric-lt-gt, c-electric-paren):
+	Invoke c--call-post-self-insert-hook-more-safely (which calls most of the hook
+	post-self-insert-hook) at the end of each of the commands.
+
+2019-11-30  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	CC Mode.  Fix fontification bug with unterminated quotes on adjacent lines
+
+	In particular, with these unterminated quotes on each of two adjacent lines,
+	the following text was spuriously fontified with string face.
+
+	* cc-defs.el (c-search-backward-char-property-with-value-on-char): New macro.
+
+	* cc-mode.el (c-clear-string-fences): Check whether there is an unmatched
+	quote at a lower buffer position which should match the current quote, rather
+	than wrongly assuming the latter is unmatched and marking it with a
+	punctuation syntax.
+	(c-font-lock-fontify-region): Ensure all pertinent parts of the buffer have
+	string fence properties applied before performing any syntactic operations on
+	it; in particular, this applies to a quote at an earlier buffer position which
+	"matches" one inside the region about to be fontified.
+
+2019-11-14  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	CC Mode: Fix two bugs in the "state cache".
+
+	This (along with a suggestion to the OP to set
+	open-paren-in-column-0-is-defun-start to nil) fixes bug #37910.  It may also
+	have fixed bug #5490 and bug #18072.
+
+	* cc-engine.el (c-state-cache-non-literal-place): Remove this non-sensical
+	function, replacing it with ....
+	(c-state-cache-lower-good-pos): New function.
+	(c-renarrow-state-cache, c-append-lower-brace-pair-to-state-cache)
+	(c-remove-stale-state-cache, c-remove-stale-state-cache-backwards): Instead of
+	altering the state-cache list structure with setcar and setcdr, use setq and
+	consing.
+	(c-parse-state-1): Call c-state-cache-lower-good-pos rather than
+	c-state-cache-non-literal-place.
+
+2019-11-10  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	* cc-vars.el (c-mark-wrong-style-of-comment): Change the :version to a string
+
+2019-11-09  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	Widen around c-font-lock-fontify-region.  This fixes bug #38049.
+
+	* cc-mode (c-font-lock-fontify-region): Widen in this function, to ensure that
+	the CC Mode font locking mechanism can examine characters outside the given
+	region.
+
+2019-11-09  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	CC Mode.  Allow fontification of "wrong" style comments with warning face.
+
+	This fixes bug #4192.
+
+	* cc-defs.el (c-font-lock-flush): New macro.
+
+	* cc-cmds.el (c-toggle-comment-style): On toggling the comment style, invoke
+	c-font-lock-flush when c-mark-wrong-style-of-comment is non-nil, to cause that
+	marking to be done instead on the other style of comment.
+
+	* cc-fonts.el (c-maybe-font-lock-wrong-style-comments): New function.
+	(c-cpp-matchers): Call c-maybe-font-lock-wrong-style-comments when
+	appropriate.
+
+	* cc-vars.el (c-mark-wrong-style-of-comment): New customizable option.
+
+	* cc-mode.texi (top level, Indentation Commands, Guessing the Style, Custom
+	Macros): For some opening quote marks, correct '' to ``.
+	(Minor Modes): Add an xref to the new page "Wrong Comment Style" in a
+	footnote.
+	(Wrong Comment Style): New page.
+
+	* comments-8.{cc,face}, comments-9.{cc,face}, comments-10.{awk,face}: New test
+	files.
+
+2019-11-02  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	CC Mode.  Fix slow scrolling by adding a search limit.
+
+	This fixes bug #10149.
+
+	* cc-fonts.el (c-font-lock-single-decl) Limit the search by
+	c-go-up-list-backwards to 500 non-literal characters.
+
+2019-10-25  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	CC Mode: Fix positioning of point whilst inserting comments without non-ws
+
+	* cc-cmds.el (c-guess-fill-prefix): When determining a new block comment
+	prefix (i.e. there isn't one already there to copy), and that prefix is hard
+	up against a comment closer, ensure there are at least two spaces before the
+	closer.
+	(c-indent-new-comment-line): Amend the strategy for ensuring that point isn't
+	left hard up against the comment closer after M-j.
+
+2019-10-20  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	Optimize c-crosses-statement-barrier-p for large blocks of comment.
+
+	This fixes bug #18134.
+
+	* cc-engine.el (c-crosses-statement-barrier-p): Give a limit to the
+	c-backward-syntactic-ws which is searching for a virtual semicolon.  In the
+	main loop, Use c-forward-syntactic-ws to skip blocks of comments.
+
+2019-10-12  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	Remove unneeded backslashes from doc strings and regular expressions
+
+	Also make miscellaneous amendments.
+
+	* cc-align.el, cc-cmds.el, cc-defs.el, cc-engine.el, cc-fonts.el,  cc-langs.el
+	* cc-vars.el: Remove lots of unneeded backslashes.
+
+	* cc-awk.el (c-lineup-gnu-DEFUN-intro-cont)
+	* cc-langs.el (c-string-innards-re-alist)
+	* cc-mode.el (c-<>-multichar-token-regexp)
+	(c-stmt-boundary-skip-chars-with-comma, c-auto-ops-re): Remove redundant
+	"\\|\r"s from regular expressions.
+
+	* cc-mode.el (c-make-mode-syntax-table): Correct the name of the hook
+	normal-erase-is-backspace-MODE-hook from a non-existant hook name.
+
+2019-10-11  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	C++ Mode: Correctly handle <:, <::, <::>, etc, according to the C++ standard
+
+	* cc-engine.el (c-before-change-check-<>-operators): Perform checking now on
+	an insertion, should point be inside a critical token.
+	(c-forward-<>-arglist-recur, c-guess-continued-construct): Check for <::, etc.
+
+	* cc-langs.el (c-<-pseudo-digraph-cont-regexp, c-<-pseudo-digraph-cont-len):
+	New lang variables/constants.
+
+2019-10-03  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	C++ Mode: Correct the fontification of const auto foo
+
+	* cc-engine.el (c-forward-decl-or-cast-1): Correct a coding error involving
+	`and' and `or'.
+
+	* decls-37.{cc,face}: Insert two extra lines to test the current scenario.
+
+2019-10-03  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	C++ Mode: Fontify correctly declarators with identifier preceded by &
+
+	The problem was bar in the following being spuriously recognised as a
+	function, and foo as a type, as though the & were a *: Foo foo (&bar);.
+
+	* cc-engine.el (c-forward-decl-or-cast-1): New variable
+	got-function-name-prefix, which is set when an operator like * (but not &)
+	precedes the putative identifer in parentheses.  Test this variable when
+	deciding whether or not to "move the type backwards" to the previous
+	identifier.
+
+	* cc-langs.el (c-type-decl-operator-prefix-key): New lang const and var.
+
+	* decls-50.{cc,face}: New test files.
+
+2019-09-21  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	CC Mode: Fix wrong fontification of FOO in ASSERT (FOO && !BAR)
+
+	* cc-engine.el (c-forward-decl-or-cast-1): Don't recognize the construct in
+	CASE 18, unless additionally at-decl-end is set.
+
+	* statement-29.{cc,face}: New test case.
+
+2019-08-06  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	C++ Mode: Prevent End of statement being found after {} in "count << vec{} <<"
+
+	* cc-engine.el (c-beginning-of-statement-1): Check for operators which cannot
+	start a statement, which may follow a closing brace.  Don't recognise an end
+	of statement in such a case.
+
+	* cc-langs.el (c-operator-re, c-bin-tern-operators, c-unary-operators)
+	(c-non-after-{}-operators, c-non-after-{}-ops-re): New lang consts and vars.
+
+	* stream-3.{cc,res}: New test files.
+
+2019-08-02  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	CC Mode: Fix error in macro cache.  This fixes bug #36802
+
+	* cc-engine.el (c-invalidate-macro-cache): Add in a cond arm to handle the
+	change position being less than the recorded CPP contruct end.
+
+2019-08-02  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	CC Mode: Fix spurious recognition of operators beginning with, e.g. "or"
+
+	This fixes bug #36801.
+
+	* cc-langs.el (c-pre-lambda-tokens-re): Use c-make-keywords-re rather than
+	regexp-opt to make an optimised regexp out of a list of tokens.
+
+2019-08-02  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	CC Mode: Fix the timing of application and removal of string fence properties
+
+	This fixes bug #36897.
+
+	* cc-mode.el (c-before-change-check-unbalanced-strings): Check string fence
+	text properties are actually present on string delimiters before trying to
+	remove them.
+	(c-before-change): Amend the nesting of unwind-protect, widen,
+	c-restore-string-fences, and c-clear-string-fences.  Move
+	invalidate-state-cache to outside of the widening.
+	(c-after-change): Amend the nesting of unwind-protect, widen,
+	c-restore-string-fences, and c-clear-string-fences.
+
+2019-07-28  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	CC Mode.  Fix (c-beginning-of-statement -1) getting stuck with structs.
+
+	In particular, with an initialization such as struct foo {..} bar = {...};
+
+	* cc-cmds.el (c-forward-to-nth-EOF-{): Rename to c-forward-to-nth-EOF-\;-or-},
+	and when the starting (or ending) position is in the "variable" part of a
+	struct/class/union/enum/etc., move to after the terminating semicolon.  Adjust
+	the counting such that N only gets decremented on a successful movement over
+	{..}.
+	(c-beginning-of-defun, c-end-of-defun): Rename the calls to
+	c-forward-to-nth-EOF-}, as above.
+
+2019-07-27  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	Java Mode: Fix handling of nested generics ending in >>>.
+
+	This fixes bug #24671.
+
+	* cc-langs.el (c-multichar->-op-not->>-regexp): remove, transforming into ...
+	(c-multichar->-op-not->>->>>-regexp) New lang const/var.
+
+	* cc-engine.el (c-forward-<>-arglist-recur): use the new
+	c-multichar->-op-not->>->>>-regexp in place of the old
+	c-multichar->-op-not->>-regexp.
+
+	* generics-2.{java,face}: New test files.
+
+2019-07-27  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	CC Mode: Stop /**/ spuriously fontifying as a doc comment under gtkdoc
+
+	Also fix infinite loops by correcting two regexps.
+
+	* cc-langs.el (c-last-c-comment-end-on-line-re)
+	(c-last-open-c-comment-start-on-line-re): Correct the regexp fragments
+	"\\*+[^/]" to "\\*+\\([^*/]\\|$\\)".
+
+	* cc-fonts.el (gtkdoc-font-lock-keywords): Disallow /**/ for doc comment
+	fontification.
+
+2019-07-26  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	CC Mode.  Create lang vars for certain skipping expressions at compile time
+
+	This saves repeated calculations at run time.
+
+	* cc-langs.el (c-stmt-boundary-skip-chars, c-stmt-boundary-skip-list)
+	(c-stmt-boundary-skip-chars-with-comma, c-stmt-boundary-skip-list-with-comma):
+	New lang constants/variables.
+
+	* cc-engine.el (c-commas-bound-stmts): New variable
+	(c-beginning-of-statement-1): Set c-commas-bound-stmts rather than
+	c-stmt-delim-chars.
+	(c-crosses-statement-barrier-p): Remove the now unneeded calculations of
+	c-stmt-delim-chars.  Set skip chars to one of the new lang variables, and
+	later to a substring of it.
+	(c-at-statement-start-p): Set c-syntactic-skip-backward from the new
+	variables.
+	(c-at-expression-start-p): Bind c-commas-bound-stmts.  Use
+	c-stmt-delim-chars-with-comma rather than c-stmt-delim-chars in a backward
+	scan.
+	(c-guess-basic-syntax): Bind c-commas-bound-stmts rather than
+	c-stmt-delim-chars to itself.  Bind c-commas-bound-stmts to t at another place
+	rather than setting c-stmt-delim-chars to c-stmt-delim-chars-with-comma.
+
+2019-07-25  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	* cc-awk.el (c-awk-var-num-ket-re): Remove /x80-/xff from it.
+
+	Emacs isn't using ISO8859-1 by default any more.  Also remove \ from \( and \)
+	in c-awk-non-arith-op-bra-re.
+
+2019-07-23  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	Fix problems in CC Mode with " being entered into a comment at EOB.
+
+	* cc-engine.el (c-full-lit-near-cache): Amend the definition such that an
+	element's END element will be nil if the pertinent literal is open at EOB.
+	(c-full-pp-to-literal): Before setting the aforementioned END element, check
+	that we're no longer in a literal.  (c-literal-limits): When
+	c-full-pp-to-literal returns a list with a nil END element, replace this by
+	(point-max) to keep the interface of c-literal-limits unchanged.
+
+	* cc-mode.el (c-after-change-mark-abnormal-strings): Having found a string
+	quote, check it is not inside an unterminated comment (i.e. one at EOB).
+
+2019-07-21  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	Implement C++ Mode attributes.  This fixes bug #36650.
+
+	* cc-engine.el (c-looking-at-c++-attribute, c-enclosing-c++-attribute)
+	(c-slow-enclosing-c++-attribute): New macro and functions.
+	(c-crosses-statement-barrier-p): Add [ into skip-chars for C++ Mode, and use
+	it to detect and skip over an attribute whilst scanning forward.
+	(c-sws-lit-type): Use the new value 'attribute.
+	(c-invalidate-sws-region-before): Put a save-match-data around this function.
+	Detect and handle an enclosing attribute at either END or BEG.
+	(c-invalidate-sws-region-after): Handle C++ attributes.
+	(c-forward-sws, c-backward-sws): Handle C++ attributes.
+
+	* cc-mode.el (c-fl-decl-end): Detect and handle point being inside a C++
+	attribute.
+
+	* attribute-1.{cc,res,face}: New test files.
+
+2019-07-17  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	* cc-fonts.el (gtkdoc-font-lock-keywords): Fix faulty regexp
+
+2019-07-16  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	CC Mode: allow bogously "adjacent" double quote marks to pair up syntactically
+
+	For this introduce the text property c-fl-syn-tab to "mirror" syntax-table.
+
+	* cc-defs.el (c-is-escaped, c-will-be-escaped, c-put-syn-tab, c-clear-syn-tab)
+	(c-clear-syn-tab-properties, c-with-extended-string-fences): new macros.
+	(c-point): Use c-is-escaped
+	(c-search-forward-char-property, c-search-backward-char-property)
+	(c-search-forward-char-property-with-value-on-char)
+	(c-search-forward-char-property-without-value-on-char): Fix regexp error
+	involving \n.
+
+	* cc-engine.el (c-semi-pp-to-literal): Use c-with-extended-string-fences
+	around a parse-partial-sexp.
+	(c-full-get-near-cache-entry): Fix an off-by-one error.
+	(c-full-pp-to-literal): Avoid writing duplicate entries into a cache.
+	(c-after-change-unmark-raw-strings): Use c-clear-syn-tab-properties.
+
+	* cc-mode.el (c-leave-cc-mode-mode): Clear the c-fl-syn-tab properties, too.
+	(c-basic-common-init): Mark c-fl-syn-tab as a non-sticky text property.
+	(c-depropertize-new-text): Also handle c-fl-syn-tab.
+	(c-multiline-string-check-final-quote, c-parse-quotes-after-change): Use
+	c-is-escaped.
+	(c-fl-syn-tab-region): New variable.
+	(c-clear-string-fences, c-restore-string-fences, c-remove-string-fences): New
+	functions.
+	(c-before-change-check-unbalanced-strings)
+	(c-after-change-mark-abnormal-strings, c-after-change-escape-NL-in-string):
+	Use the new functions and macros.
+	(c-before-change, c-after-change, c-font-lock-fontify-region): Restore the
+	syntax-table text properties from c-fl-syn-tab text properties for these
+	functions.
+	(c-electric-pair-inhibit-predicate): Test the c-fl-syn-tab property rather
+	than syntax-table.
+
+2019-07-08  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	Fix coding error in c-forward-decl-or-cast-1.  This fixes bug #36492.
+
+	* cc-engine.el (c-forward-decl-or-cast-1): While testing for, e.g., foo(),
+	check we've found the ( before trying to go to its position.
+
+	* decls-49.{c,face}: New test files.
+
+2019-07-08  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	Fix bug #36474, such that CC Mode quotes work properly in electric-pair-mode
+
+	Also finishes the fix for bug #36423.
+
+	* cc-mode.el (c-initialize-cc-mode): Add an `eval-after-load' to set
+	electric-pair-inhibit-predicate for existing CC Mode buffers when
+	elec-pair.elc gets loaded.
+	(c-basic-common-init): Set electric-pair-inhibit-predicate when a CC Mode mode
+	gets initialized.
+	(c-electric-pair-inhibit-predicate): New function.
+
+2019-07-04  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	Fix an infinite loop in c-end-of-macro.  Should fix bug #36484
+
+	Also fix two faulty regexps, save-match-data, and check c-major-mode-is
+	'c++-mode where needed.
+
+	* cc-langs.el (c-last-c-comment-end-on-line-re)
+	(c-last-open-c-comment-start-on-line-re): Handle repeated *s in regexp
+	correctly.
+
+	* cc-engine.el (c-beginning-of-macro, c-end-of-macro): Protect the match-data
+	with save-match-data around regexp operations.
+	(c-end-of-macro): In the loop handling multiline block comments, check a
+	comment actually is multiline.
+
+	* cc-mode.el (c-depropertize-CPP): Only call
+	c-depropertize-raw-strings-in-region in C++ Mode.
+
+2019-07-02  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	CC Mode: Improve handling of unbalanced strings
+
+	* cc-fonts.el (c-before-font-lock-functions): Add function
+	c-after-change-escape-NL-in-string into value for most languages.
+
+	* cc-mode.el (c-after-change-escape-NL-in-string): New function.
+	(c-before-change-check-unbalanced-strings): Handle the making and breaking of
+	escaped newlines, by removal or addition of text.
+
+2019-06-30  Alan Mackenzie  <bug-cc-mode@gnu.org>
+
+	C++ Mode: change the default doc comment style from nothing to gtkdoc
+
+	Also amend a pertinent regular expression.  This fixes bug #11865.
+
+	* cc-vars.el (c-doc-comment-style): Insert an entry for c++-mode, namely
+	gtkdoc.
+
+	* cc-fonts.el (gtkdoc-font-lock-keywords): Amend the regexp recognizing the
+	introductory "/**" to allow subsequent characters on that line.
+
 2019-06-19  Alan Mackenzie  <bug-cc-mode@gnu.org>
 
 	Update the repository for the release of CC Mode 5.34.

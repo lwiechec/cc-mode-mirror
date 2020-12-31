@@ -1,4 +1,4 @@
-Manifest for CC Mode 5.31
+Manifest for CC Mode 5.35
 
 You should have received the following files in this distribution:
 
@@ -29,4 +29,5 @@ and XEmacs:
 
     cc-align.el, cc-awk.el, cc-bytecomp.el, cc-cmds.el, cc-defs.el,
     cc-engine.el, cc-fonts.el, cc-guess.el, cc-langs.el, cc-menus.el,
-    cc-mode.el, cc-styles.el, cc-subword.el, cc-vars.el, cc-mode.texi
+    cc-mode.el, cc-styles.el, cc-subword.el (only with XEmacs),
+    cc-vars.el, cc-mode.texi
