@@ -6,7 +6,7 @@ mixed foo (
     b, c
     );
 mixed foo = {a,
-    b, c
+	     b, c
 };
 mixed foo = ({a,
 	      b, c
@@ -33,3 +33,6 @@ a = {
 		  a, b, c
 	      >)
     ])}
+// Local Variables:
+// c-file-offsets: ((brace-list-intro . (first c-lineup-2nd-brace-entry-in-arglist c-lineup-class-decl-init-+ +)))
+// End:

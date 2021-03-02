@@ -11,3 +11,6 @@
 ((arglist-cont-nonempty <1,0> <1,8>) (brace-list-intro <1,0>))
 ((brace-list-entry <1,8>))
 ((arglist-cont-nonempty <3,0> <3,8>) (brace-list-close <3,0>))
+((topmost-intro <1,0>) (comment-intro))
+((topmost-intro <2,0>) (comment-intro))
+((topmost-intro <3,0>) (comment-intro))
