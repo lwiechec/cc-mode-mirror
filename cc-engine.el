@@ -1,4 +1,4 @@
-;;; cc-engine.el --- core syntax guessing engine for CC mode
+;;; cc-engine.el --- core syntax guessing engine for CC mode -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1985, 1987, 1992, 1993, 1994, 1995, 1996, 1997, 1998,
 ;;   1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009,
@@ -171,6 +171,8 @@
 (cc-bytecomp-defvar c-doc-line-join-re)
 (cc-bytecomp-defvar c-doc-bright-comment-start-re)
 (cc-bytecomp-defvar c-doc-line-join-end-ch)
+(defvar c-syntactic-context)
+(defvar c-syntactic-element)
 (cc-bytecomp-defvar c-min-syn-tab-mkr)
 (cc-bytecomp-defvar c-max-syn-tab-mkr)
 (cc-bytecomp-defun c-clear-syn-tab)
@@ -2722,9 +2724,9 @@ comment at the start of cc-engine.el for more info."
   ;; two char construct (such as a comment opener or an escaped character).)
   (if (and (consp elt) (>= (length elt) 3))
       ;; Inside a string or comment
-      (let ((depth 0) (containing nil) (last nil)
+      (let ((depth 0) (containing nil)
 	    in-string in-comment
-	    (min-depth 0) com-style com-str-start (intermediate nil)
+	    (min-depth 0) com-style com-str-start
 	    (char-1 (nth 3 elt))	; first char of poss. 2-char construct
 	    (pos (car elt))
 	    (type (cadr elt)))
@@ -2741,14 +2743,13 @@ comment at the start of cc-engine.el for more info."
 		       (1- pos)
 		     pos))
 	(if (memq 'pps-extended-state c-emacs-features)
-	    (list depth containing last
+	    (list depth containing nil
 		  in-string in-comment nil
 		  min-depth com-style com-str-start
-		  intermediate nil)
-	  (list depth containing last
+		  nil nil)
+	  (list depth containing nil
 		in-string in-comment nil
-		min-depth com-style com-str-start
-		intermediate)))
+		min-depth com-style com-str-start nil)))
 
     ;; Not in a string or comment.
     (if (memq 'pps-extended-state c-emacs-features)

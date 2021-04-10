@@ -1,4 +1,4 @@
-;;; cc-align.el --- custom indentation functions for CC Mode
+;;; cc-align.el --- custom indentation functions for CC Mode -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1985, 1987, 1992, 1993, 1994, 1995, 1996, 1997, 1998,
 ;;   1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009,
@@ -47,6 +47,9 @@
 (cc-require 'cc-defs)
 (cc-require 'cc-vars)
 (cc-require 'cc-engine)
+
+(defvar c-syntactic-context)
+(defvar c-syntactic-element)
 
 
 ;; Standard line-up functions

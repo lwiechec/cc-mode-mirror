@@ -1,4 +1,4 @@
-;;; cc-vars.el --- user customization variables for CC Mode
+;;; cc-vars.el --- user customization variables for CC Mode -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1985, 1987, 1992, 1993, 1994, 1995, 1996, 1997, 1998,
 ;;   1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009,
@@ -48,6 +48,8 @@
 
 ;; Silence the compiler.
 (cc-bytecomp-defun get-char-table)	; XEmacs
+(defvar c-syntactic-context)
+(defvar c-syntactic-element)
 
 (cc-eval-when-compile
   (require 'custom)
@@ -579,7 +581,7 @@ comment styles:
 
  javadoc -- Javadoc style for \"/** ... */\" comments (default in Java mode).
  autodoc -- Pike autodoc style for \"//! ...\" comments (default in Pike mode).
- gtkdoc  -- GtkDoc style for \"/** ... **/\" comments (default in C and C++ modes).
+ gtkdoc  -- GtkDoc style for \"/** ... **/\" comments (default in C/C++ modes).
  doxygen -- Doxygen style.
 
 The value may also be a list of doc comment styles, in which case all

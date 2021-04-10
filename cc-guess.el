@@ -1,4 +1,4 @@
-;;; cc-guess.el --- guess indentation values by scanning existing code
+;;; cc-guess.el --- guess indentation values by scanning existing code -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1985,1987,1992-2003, 2004, 2005, 2006, 2007, 2008,
 ;; 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020,
@@ -499,8 +499,7 @@ is called with one argument, the guessed style."
   ;; If an entry in `c-offsets-alist' holds a guessed value, move it to
   ;; front in the field. In addition alphabetical sort by entry name is done.
   (setq style (copy-tree style))
-  (let ((offsets-alist-cell (assq 'c-offsets-alist style))
-	(guessed-syntactic-symbols (c-guess-guessed-syntactic-symbols)))
+  (let ((offsets-alist-cell (assq 'c-offsets-alist style)))
     (setcdr offsets-alist-cell
 	    (sort (cdr offsets-alist-cell)
 		  (lambda (a b)

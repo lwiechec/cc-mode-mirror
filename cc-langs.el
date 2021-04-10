@@ -1,4 +1,4 @@
-;;; cc-langs.el --- language specific settings for CC Mode
+;;; cc-langs.el --- language specific settings for CC Mode -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1985, 1987, 1992, 1993, 1994, 1995, 1996, 1997, 1998,
 ;;   1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009,
@@ -565,10 +565,10 @@ don't have EOL terminated statements. "
 (c-lang-defvar c-at-vsemi-p-fn (c-lang-const c-at-vsemi-p-fn))
 
 (c-lang-defconst c-vsemi-status-unknown-p-fn
-  "Contains a function \"are we unsure whether there is a virtual semicolon on this line?\".
+  "A function \"are we unsure whether there is a virtual semicolon on this line?\".
 The (admittedly kludgy) purpose of such a function is to prevent an infinite
 recursion in c-beginning-of-statement-1 when point starts at a `while' token.
-The function MUST NOT UNDER ANY CIRCUMSTANCES call c-beginning-of-statement-1,
+The function MUST NOT UNDER ANY CIRCUMSTANCES call `c-beginning-of-statement-1',
 even indirectly.  This variable contains nil for languages which don't have
 EOL terminated statements."
   t nil

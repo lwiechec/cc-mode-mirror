@@ -1,4 +1,4 @@
-;;; cc-fonts.el --- font lock support for CC Mode
+;;; cc-fonts.el --- font lock support for CC Mode -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009,
 ;;   2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020,
@@ -2302,7 +2302,8 @@ need for `c-font-lock-extra-types'.")
 		       (c-go-up-list-backward)
 		       (eq (char-after) ?{)
 		       (eq (car (c-beginning-of-decl-1
-				 (c-determine-limit 1000))) 'same)
+				 (c-determine-limit 1000)))
+			   'same)
 		       (looking-at c-colon-type-list-re)))
 		;; Inherited protected member: leave unfontified
 		)

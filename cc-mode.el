@@ -1,4 +1,4 @@
-;;; cc-mode.el --- major mode for editing C and similar languages
+;;; cc-mode.el --- major mode for editing C and similar languages -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1985, 1987, 1992, 1993, 1994, 1995, 1996, 1997, 1998,
 ;;   1999, 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009,
@@ -98,6 +98,7 @@
 ;; Silence the compiler.
 (cc-bytecomp-defvar adaptive-fill-first-line-regexp) ; Emacs
 (cc-bytecomp-defun run-mode-hooks)	; Emacs 21.1
+(cc-bytecomp-defun c-awk-unstick-NL-prop)
 (cc-bytecomp-obsolete-fun make-local-hook) ; Marked obsolete in Emacs 21.1.
 (cc-bytecomp-defvar normal-erase-is-backspace)
 (cc-bytecomp-defvar file-local-variables-alist)
