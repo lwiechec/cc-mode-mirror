@@ -1820,6 +1820,7 @@ No indentation or other \"electric\" behavior is performed."
     ;; This is a very special purpose macro, which assumes the existence of
     ;; several variables.  It is for use only in c-beginning-of-defun and
     ;; c-end-of-defun.
+    (declare (debug t))
     `(while
 	 (and ,condition
 	      (eq c-defun-tactic 'go-outward)
@@ -1827,16 +1828,8 @@ No indentation or other \"electric\" behavior is performed."
        (setq paren-state (c-whack-state-after lim paren-state))
        (setq lim (c-widen-to-enclosing-decl-scope
 		  paren-state orig-point-min orig-point-max))
-;;;; OLD STOUGH, 2021-04-08
-       ;; (setq where 'in-block)
-;;;; NEW STOUGH, 2021-04-08
        ,@(if (not no-where)
-	     `((setq where 'in-block)))
-;;;; END OF NEW STOUGH
-       )))
-
-(eval-after-load "edebug"
-  '(def-edebug-spec c-while-widening-to-decl-block t))
+	     `((setq where 'in-block))))))
 
 (defun c-beginning-of-defun (&optional arg)
   "Move backward to the beginning of a defun.
@@ -2304,10 +2297,7 @@ with a brace block, at the outermost level of nesting."
 	(c-save-buffer-state ((paren-state (c-parse-state))
 			      (orig-point-min (point-min))
 			      (orig-point-max (point-max))
-			      lim name limits ;; where
-			      )
-	  ;; (ignore where) ; `where' gets written to, but not used, in
-	  ;; 		 ; `c-while-widening-to-decl-block'.
+			      lim name limits)
 	  (setq lim (c-widen-to-enclosing-decl-scope
 		     paren-state orig-point-min orig-point-max))
 	  (and lim (setq lim (1- lim)))

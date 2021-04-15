@@ -214,6 +214,7 @@
     ;; incorrectly.
     ;;
     ;; This function does a hidden buffer change.
+    (declare (debug t))
     (if (fboundp 'font-lock-set-face)
 	;; Note: This function has no docstring in XEmacs so it might be
 	;; considered internal.
@@ -224,6 +225,7 @@
     ;; This is the inverse of `c-put-font-lock-face'.
     ;;
     ;; This function does a hidden buffer change.
+    (declare (debug t))
     (if (fboundp 'font-lock-remove-face)
 	`(font-lock-remove-face ,from ,to)
       `(remove-text-properties ,from ,to '(face nil))))
@@ -234,11 +236,13 @@
     ;; region should include them.
     ;;
     ;; This function does a hidden buffer change.
+    (declare (debug t))
     (if (featurep 'xemacs)
 	`(c-put-font-lock-face (1+ ,from) (1- ,to) 'font-lock-string-face)
       `(c-put-font-lock-face ,from ,to 'font-lock-string-face)))
 
   (defmacro c-fontify-types-and-refs (varlist &rest body)
+    (declare (indent 1) (debug let*))
     ;; Like `let', but additionally activates `c-record-type-identifiers'
     ;; and `c-record-ref-identifiers', and fontifies the recorded ranges
     ;; accordingly on exit.
@@ -249,7 +253,6 @@
 	   ,@varlist)
        (prog1 (progn ,@body)
 	 (c-fontify-recorded-types-and-refs))))
-  (put 'c-fontify-types-and-refs 'lisp-indent-function 1)
 
   (defun c-skip-comments-and-strings (limit)
     ;; If the point is within a region fontified as a comment or
@@ -478,20 +481,7 @@
 	  ;; In the next form, check that point hasn't been moved beyond
 	  ;; `limit' in any of the above stanzas.
 	  ,(c-make-font-lock-search-form (car normal) (cdr normal) t)
-	  nil))))
-
-  (eval-after-load "edebug"
-    '(progn
-       (def-edebug-spec c-put-font-lock-face t)
-       (def-edebug-spec c-remove-font-lock-face t)
-       (def-edebug-spec c-put-font-lock-string-face t)
-       (def-edebug-spec c-fontify-types-and-refs let*)
-       (def-edebug-spec c-make-syntactic-matcher t)
-       ;; If there are literal quoted or backquoted highlight specs in
-       ;; the call to `c-make-font-lock-search-function' then let's
-       ;; instrument the forms in them.
-       (def-edebug-spec c-make-font-lock-search-function
-	 (form &rest &or ("quote" (&rest form)) ("`" (&rest form)) form)))))
+	  nil)))))
 
 (defun c-fontify-recorded-types-and-refs ()
   ;; Convert the ranges recorded on `c-record-type-identifiers' and
@@ -2710,6 +2700,7 @@ need for `pike-font-lock-extra-types'.")
 (defmacro c-set-doc-comment-re-element (suffix)
   ;; Set the variable `c-doc-line-join-re' to a buffer local value suitable
   ;; for the current doc comment style, or kill the local value.
+  (declare (debug t))
   (let ((var (intern (concat "c-doc" suffix))))
     `(let* ((styles (c-get-doc-comment-style))
 	    elts)
@@ -2736,6 +2727,7 @@ need for `pike-font-lock-extra-types'.")
 (defmacro c-set-doc-comment-char-list (suffix)
   ;; Set the variable 'c-doc-<suffix>' to the list of *-<suffix>, which must
   ;; be characters, and * represents the doc comment style.
+  (declare (debug t))
   (let ((var (intern (concat "c-doc" suffix))))
     `(let* ((styles (c-get-doc-comment-style))
 	    elts)
@@ -2781,7 +2773,7 @@ need for `pike-font-lock-extra-types'.")
   ;; is used as a flag in other code to skip comments.
   ;;
   ;; This function might do hidden buffer changes.
-
+  (declare (indent 2))
   (let (comment-beg region-beg)
     (if (memq (get-text-property (point) 'face)
 	      '(font-lock-comment-face font-lock-comment-delimiter-face))
@@ -2864,7 +2856,6 @@ need for `pike-font-lock-extra-types'.")
 
 	  (goto-char region-end)))))
   nil)
-(put 'c-font-lock-doc-comments 'lisp-indent-function 2)
 
 (defun c-find-invalid-doc-markup (regexp limit)
   ;; Used to fontify invalid markup in doc comments after the correct
