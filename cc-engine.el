@@ -6965,8 +6965,10 @@ comment at the start of cc-engine.el for more info."
 	(c-go-list-forward))
       (when (equal (c-get-char-property (1- (point)) 'syntax-table)
 		   c->-as-paren-syntax) ; should always be true.
-	(c-unmark-<->-as-paren (1- (point))))
-      (c-unmark-<->-as-paren pos))))
+	(c-unmark-<->-as-paren (1- (point)))
+	(c-truncate-lit-pos-cache (1- (point))))
+      (c-unmark-<->-as-paren pos)
+      (c-truncate-lit-pos-cache pos))))
 
 (defun c-clear->-pair-props (&optional pos)
   ;; POS (default point) is at a > character.  If it is marked with
@@ -6982,8 +6984,10 @@ comment at the start of cc-engine.el for more info."
 	(c-go-up-list-backward))
       (when (equal (c-get-char-property (point) 'syntax-table)
 			c-<-as-paren-syntax) ; should always be true.
-	(c-unmark-<->-as-paren (point)))
-      (c-unmark-<->-as-paren pos))))
+	(c-unmark-<->-as-paren (point))
+	(c-truncate-lit-pos-cache (point)))
+      (c-unmark-<->-as-paren pos)
+      (c-truncate-lit-pos-cache pos))))
 
 (defun c-clear-<>-pair-props (&optional pos)
   ;; POS (default point) is at a < or > character.  If it has an
@@ -7016,7 +7020,8 @@ comment at the start of cc-engine.el for more info."
 		 (equal (c-get-char-property (1- (point)) 'syntax-table)
 			c->-as-paren-syntax)) ; should always be true.
 	(c-unmark-<->-as-paren (1- (point)))
-	(c-unmark-<->-as-paren pos))
+	(c-unmark-<->-as-paren pos)
+	(c-truncate-lit-pos-cache pos))
       t)))
 
 (defun c-clear->-pair-props-if-match-before (lim &optional pos)
@@ -7037,6 +7042,7 @@ comment at the start of cc-engine.el for more info."
 		 (equal (c-get-char-property (point) 'syntax-table)
 			c-<-as-paren-syntax)) ; should always be true.
 	(c-unmark-<->-as-paren (point))
+	(c-truncate-lit-pos-cache (point))
 	(c-unmark-<->-as-paren pos))
       t)))
 
@@ -8078,13 +8084,14 @@ comment at the start of cc-engine.el for more info."
 	;; bracket arglist.  It's propagated through the return value
 	;; on successful completion.
 	(c-record-found-types c-record-found-types)
+	(syntax-table-prop-on-< (c-get-char-property (point) 'syntax-table))
 	;; List that collects the positions after the argument
 	;; separating ',' in the arglist.
 	arg-start-pos)
     ;; If the '<' has paren open syntax then we've marked it as an angle
     ;; bracket arglist before, so skip to the end.
     (if (and (not c-parse-and-markup-<>-arglists)
-	     (c-get-char-property (point) 'syntax-table))
+	     syntax-table-prop-on-<)
 
 	(progn
 	  (forward-char)
@@ -8109,7 +8116,7 @@ comment at the start of cc-engine.el for more info."
 		(progn
 		  (c-forward-syntactic-ws)
 		  (when (or (and c-record-type-identifiers all-types)
-			    (not (equal c-inside-<>-type-key "\\(a\\`\\)")))
+			    (not (equal c-inside-<>-type-key "\\(\\`a\\`\\)")))
 		    (c-forward-syntactic-ws)
 		    (cond
 		     ((eq (char-after) ??)
@@ -8167,8 +8174,20 @@ comment at the start of cc-engine.el for more info."
 			(c-put-c-type-property (1- (car arg-start-pos))
 					       'c-<>-arg-sep)
 			(setq arg-start-pos (cdr arg-start-pos)))
+		      (when (and (not syntax-table-prop-on-<)
+				 (c-get-char-property (1- (point))
+						      'syntax-table))
+			;; Clear the now spuriously matching < of its
+			;; syntax-table property.  This could happen on
+			;; inserting "_cast" into "static <" with C-y.
+			(save-excursion
+			  (and (c-go-list-backward)
+			       (eq (char-after) ?<)
+			       (c-truncate-lit-pos-cache (point))
+			       (c-unmark-<->-as-paren (point)))))
 		      (c-mark-<-as-paren start)
-		      (c-mark->-as-paren (1- (point))))
+		      (c-mark->-as-paren (1- (point)))
+		      (c-truncate-lit-pos-cache start))
 		    (setq res t)
 		    nil))		; Exit the loop.
 
