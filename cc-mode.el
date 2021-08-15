@@ -1511,9 +1511,7 @@ Note that the style variables are always made local to the buffer."
     (unless
 	(or (and
 	     ;; Don't set c-new-BEG/END if we're in an ml string.
-;;;; NEW STOUGH, 2021-08-13
 	     c-ml-string-opener-re
-;;;; END OF NEW STOUGH
 	     (eq beg-literal-type 'string)
 	     (c-ml-string-opener-at-or-around-point (car beg-limits)))
 	    (and c-multiline-string-start-char
