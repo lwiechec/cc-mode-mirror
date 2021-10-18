@@ -10426,6 +10426,7 @@ This function might do hidden buffer changes."
 			      ;; are directly inside a class (etc.) called "bar".
 			      (save-excursion
 				(and
+				 type-start
 				 (progn
 				   (goto-char name-start)
 				   (not (memq (c-forward-type) '(nil maybe))))
