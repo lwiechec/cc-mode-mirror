@@ -1746,7 +1746,7 @@ casts and declarations are fontified.  Used on level 2 and higher."
 	    (setq buf-list (cdr buf-list)))
 	  (when buf-list
 	    (with-current-buffer (car buf-list)
-	      (message "%s" (current-buffer)) ; Useful diagnostic.  FIXME!!!
+	      ;; (message "%s" (current-buffer)) ; Useful diagnostic.
 	      (save-restriction
 		(widen)
 		;; Process one `c-type-finder-chunk-size' chunk each time
