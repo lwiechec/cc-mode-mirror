@@ -763,11 +763,12 @@ that requires a literal mode spec at compile time."
 	  (move-marker (make-marker) (point-min))))
 
   ;; Install the functionality for seeking "found types" at mode startup:
-  (or c-type-finder-timer
-      (setq c-type-finder-timer
-	    (run-at-time
-	     c-type-finder-repeat-time nil #'c-type-finder-timer-func)))
-  (add-hook 'post-gc-hook #'c-post-gc-hook)
+  (when (fboundp 'jit-lock-mode)	; Emacs only
+    (or c-type-finder-timer
+	(setq c-type-finder-timer
+	      (run-at-time
+	       c-type-finder-repeat-time nil #'c-type-finder-timer-func)))
+    (add-hook 'post-gc-hook #'c-post-gc-hook))
 
   (when (boundp 'font-lock-extend-after-change-region-function)
     (set (make-local-variable 'font-lock-extend-after-change-region-function)
