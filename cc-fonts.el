@@ -199,6 +199,14 @@
 	 (unless (face-property-instance oldface 'reverse)
 	   (invert-face newface)))))
 
+(defvar c-annotation-face 'c-annotation-face)
+
+(defface c-annotation-face
+  '((t (:inherit font-lock-constant-face)))
+  "Face for highlighting annotations in Java mode and similar modes."
+  :version "24.1"
+  :group 'c)
+
 (eval-and-compile
   ;; We need the following definitions during compilation since they're
   ;; used when the `c-lang-defconst' initializers are evaluated.  Define
@@ -804,13 +812,6 @@ casts and declarations are fontified.  Used on level 2 and higher."
 	     2 font-lock-keyword-face)
 	 `(,(concat "\\<" (c-lang-const c-regular-keywords-regexp))
 	   1 font-lock-keyword-face))
-
-      ;; The following must come before c-font-lock-enclosing-decls in
-      ;; c-complex-decl-matchers.  It fontifies java @annotations.
-      ,@(when (c-major-mode-is 'java-mode)
-	  `((eval . (list "\\<\\(@[a-zA-Z0-9]+\\)\\>" 1
-			  c-preprocessor-face-name
-			  ))))
 
       ;; Fontify leading identifiers in fully qualified names like
       ;; "foo::bar" in languages that supports such things.
@@ -2338,7 +2339,11 @@ higher."
 			 "\\)\\>")
 		 '((c-fontify-types-and-refs ((c-promote-possible-types t))
 		     (c-forward-keyword-clause 1)
-		     (if (> (point) limit) (goto-char limit))))))))))
+		     (if (> (point) limit) (goto-char limit))))))))
+
+	,@(when (c-major-mode-is 'java-mode)
+	    '((eval . (list "\\<\\(@[a-zA-Z0-9]+\\)\\>" 1 c-annotation-face))))
+      ))
 
 (c-lang-defconst c-matchers-1
   t (c-lang-const c-cpp-matchers))
