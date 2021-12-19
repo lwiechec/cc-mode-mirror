@@ -123,16 +123,6 @@
 (eval-after-load "font-lock"
   '(require 'cc-fonts))
 
-(defvar c-type-finder-timer nil)
-;; The variable which holds the repeating idle timer which triggers off the
-;; background type finding search.
-
-(defvar c-inhibit-type-finder nil)
-;; When non-nil (set by `c-post-gc-hook') don't perform the type finding
-;; activities the next time `c-type-finder-timer' triggers.  This ensures
-;; keyboard/mouse input will be dealt with when garbage collection is taking a
-;; large portion of CPU time.
-
 ;; The following three really belong to cc-fonts.el, but they are required
 ;; even when cc-fonts.el hasn't been loaded (this happens in XEmacs when
 ;; font-lock-mode is nil).
@@ -191,10 +181,7 @@
 		       c-buffer-is-cc-mode))
 		(throw 'found nil)))
 	  (remove-hook 'post-command-hook 'c-post-command)
-	  (remove-hook 'post-gc-hook 'c-post-gc-hook)
-	  (and c-type-finder-timer
-	       (progn (cancel-timer c-type-finder-timer)
-		      (setq c-type-finder-timer nil)))))
+	  (remove-hook 'post-gc-hook 'c-post-gc-hook)))
       (c-save-buffer-state ()
 	(c-clear-char-properties (point-min) (point-max) 'category)
 	(c-clear-char-properties (point-min) (point-max) 'syntax-table)
@@ -580,12 +567,6 @@ preferably use the `c-mode-menu' language constant directly."
 ;; currently no such text property.
 (make-variable-buffer-local 'c-max-syn-tab-mkr)
 
-;; `c-type-finder-pos' is a marker marking the current place in a CC Mode
-;; buffer which is due to be searched next for "found types", or nil if the
-;; searching is complete.
-(defvar c-type-finder-pos nil)
-(make-variable-buffer-local 'c-type-finder-pos)
-
 (defun c-basic-common-init (mode default-style)
   "Do the necessary initialization for the syntax handling routines
 and the line breaking/filling code.  Intended to be used by other
@@ -757,18 +738,6 @@ that requires a literal mode spec at compile time."
       (make-local-hook 'after-change-functions))
   (add-hook 'after-change-functions 'c-after-change nil t)
   (add-hook 'post-command-hook 'c-post-command)
-  (setq c-type-finder-pos
-	(save-restriction
-	  (widen)
-	  (move-marker (make-marker) (point-min))))
-
-  ;; Install the functionality for seeking "found types" at mode startup:
-  (when (fboundp 'jit-lock-mode)	; Emacs only
-    (or c-type-finder-timer
-	(setq c-type-finder-timer
-	      (run-at-time
-	       c-type-finder-repeat-time nil #'c-type-finder-timer-func)))
-    (add-hook 'post-gc-hook #'c-post-gc-hook))
 
   (when (boundp 'font-lock-extend-after-change-region-function)
     (set (make-local-variable 'font-lock-extend-after-change-region-function)
@@ -2014,9 +1983,6 @@ Note that this is a strict tail, so won't match, e.g. \"0x....\".")
     (setq c-new-id-start nil
 	  c-new-id-end nil
 	  c-new-id-is-type nil)))
-
-(defun c-post-gc-hook (&optional _stats) ; For XEmacs.
-  (setq c-inhibit-type-finder t))
 
 (defun c-before-change (beg end)
   ;; Function to be put in `before-change-functions'.  Primarily, this calls
