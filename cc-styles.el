@@ -187,6 +187,7 @@
 			 (inclass              . +)
 			 (inline-open          . 0))))
     ("linux"
+     (indent-tabs-mode . t)
      (c-basic-offset  . 8)
      (c-comment-only-line-offset . 0)
      (c-hanging-braces-alist . ((brace-list-open)
