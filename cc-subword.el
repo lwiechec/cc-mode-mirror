@@ -173,17 +173,18 @@ as words.
 See the command `c-subword-mode' for a description of subwords.
 Optional argument ARG is the same as for `forward-word'."
   (interactive "p")
-  (unless arg (setq arg 1))
-  (c-keep-region-active)
-  (cond
-   ((< 0 arg)
-    (dotimes (_i arg (point))
-      (c-forward-subword-internal)))
-   ((> 0 arg)
-    (dotimes (_i (- arg) (point))
-      (c-backward-subword-internal)))
-   (t
-    (point))))
+  (c-with-string-fences
+   (unless arg (setq arg 1))
+   (c-keep-region-active)
+   (cond
+    ((< 0 arg)
+     (dotimes (_i arg (point))
+       (c-forward-subword-internal)))
+    ((> 0 arg)
+     (dotimes (_i (- arg) (point))
+       (c-backward-subword-internal)))
+    (t
+     (point)))))
 
 (defun c-backward-subword (&optional arg)
   "Do the same as `backward-word' but on subwords.
@@ -264,10 +265,11 @@ Optional argument ARG is the same as for `capitalize-word'."
 	(advance (if (< arg 0) nil t)))
     (dotimes (_i count)
       (if advance
-	  (progn (re-search-forward
-		  (concat "[" c-alpha "]")
-		  nil t)
-		 (goto-char (match-beginning 0)))
+	  (c-with-string-fences
+	   (re-search-forward
+	    (concat "[" c-alpha "]")
+	    nil t)
+	   (goto-char (match-beginning 0)))
 	(c-backward-subword))
       (let* ((p (point))
 	     (pp (1+ p))
